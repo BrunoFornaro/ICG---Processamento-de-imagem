@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<!-- "Configurações" do documento -->
+<head>
+	<!-- Codificação da página -->
+	<meta charset="UTF-8">
+
+	<!-- Título da aba no navegador -->
+	<title> Processamento de imagens</title>
+	<!comment: MathJax para equações matemáticas em TeX>
+		<script type="text/javascript" async
+			src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async>
+			</script>
+
+		<!-- CSS -->
+		<style>
+			body {
+				background-color: white;
+				color: black;
+				font-family: sans-serif;
+			}
+
+			#div-externa {
+				width: 80%;
+				margin-left: 10%;
+				margin-right: 10%;
+				display: block;
+				align-items: center;
+				text-align: justify;
+				justify-content: center;
+			}
+
+			.slider {
+				-webkit-appearance: none;
+				width: 95%;
+				height: 20px;
+				background: #d3d3d3;
+				outline: none;
+				opacity: 0.7;
+				-webkit-transition: .2s;
+				transition: opacity .2s;
+				margin-bottom: 0.6em;
+				margin-right: 5%;
+			}
+
+			canvas {
+				width: 19.5%;
+			}
+
+			.centralizar-texto {
+				text-align: center;
+			}
+
+			.slider:hover {
+				opacity: 1;
+			}
+
+			.slider::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				background: #04AA6D;
+				cursor: pointer;
+			}
+		</style>
+</head>
+
+<!-- Corpo do documento -->
+<body>
+	<div id="div-externa">
+		<!-- Título -->
+		<h1> Processamento de imagens</h1>
+		<!-- Subtítulo -->
+		<h2>Leitura, escrita e processamento de imagens com Canvas e JavaScript.</h2>
+
+		<!-- Texto inicial explicativo -->
+		<p>Nesta primeira atividade de processamento de imagem está sendo feita a leitura dos pixels de uma imagem em
+			RGB e, com isso, é exibido os histogramas de frequência dos valores do RGB. Posteriormente, a imagem é
+			convertida para HSL, exibindo um histograma de frequência da luminância (L). Por fim, a luminância da imagem
+			é alterada, depois convertida novamente para RGB e exibida, juntamente dos seus respectivos histogramas.</p>
+		<p>O ajuste na luminância está sendo feito da seguinte forma: </p>
+		<!-- Cálculo utilizado -->
+		<p class="centralizar-texto">nova luminância = ((luminância original - media da luminância original)(fator
+			multiplicativo para o ajuste)) + media da luminância original</p>
+		<p>Abaixo é possível ver a imagem original e seus histogramas de R, G, B e L, respectivamente, na primeira linha
+			e na segunda linha a imagem alterada e seus respectivos histogramas da mesma forma. Além disso, há abaixo
+			uma barra de ajuste para o fator multiplicativo da alteração de luminância, mude os valores para ver a
+			diferença no resultado.</p>
+
+		<!-- Paragrafo para testes -->
+		<p id="testes"></p>
+
+		<!-- Paragrafo para exibir o fator multiplicativo para o ajuste da luminância utilizado -->
+		<p id="texto_fator_multiplicativo"></p>
+
+		<!-- Slide-bar para alterar o fator multiplicativo para o ajuste da luminância -->
+		<input type="range" min="0" max="1000" value="100" class="slider" id="slide_fator_multiplicativo">
+
+		<!-- Imagens Canvas-->
+		<figure>
+			<!-- Imagem original -->
+			<canvas id="imagemOriginal" width="320" height="213"></canvas>
+			<!-- Histogramas da imagem original -->
+			<canvas id="hist_r" width="300" height="300"></canvas>
+			<canvas id="hist_g" width="300" height="300"></canvas>
+			<canvas id="hist_b" width="300" height="300"></canvas>
+			<canvas id="hist_l" width="300" height="300"></canvas>
+			<br>
+			<!-- Imagem alterada -->
+			<canvas id="imagemOutput" width="320" height="213"></canvas>
+			<!-- Histogramas da imagem alterada -->
+			<canvas id="novo_hist_r" width="300" height="300"></canvas>
+			<canvas id="novo_hist_g" width="300" height="300"></canvas>
+			<canvas id="novo_hist_b" width="300" height="300"></canvas>
+			<canvas id="novo_hist_l" width="300" height="300"></canvas>
+		</figure>
+
+		<!-- Bibliografia -->
+		<h2>Bibliografia</h2>
+		<p>STACKOVERFLOW - Drawing rotated text on a HTML5 canvas. Disponível em: <a
+				href="https://stackoverflow.com/questions/3167928/drawing-rotated-text-on-a-html5-canvas"
+				target="_blank">https://stackoverflow.com/questions/3167928/drawing-rotated-text-on-a-html5-canvas</a>.
+			Acessado 8 de dezembro de 2021.</p>
+		<p>FLEXIPLE - Average or Arithmetic mean of an array using Javascript. Disponível em: <a
+				href="https://flexiple.com/get-average-of-array-javascript/"
+				target="_blank">https://flexiple.com/get-average-of-array-javascript/</a>. Acessado 8 de dezembro de
+			2021.</p>
+
+	</div>
+
+
+	<!-- JavaScript -->
+	<script>
+		// Criando as variáveis para editar os Canvas pelo JavaScript (pelo id do respectivo Canvas)
+		var canvasOriginal = document.getElementById("imagemOriginal");
+		var ctxOriginal = canvasOriginal.getContext("2d");
+
+		var canvasOut = document.getElementById("imagemOutput");
+		var ctxOutput = canvasOut.getContext("2d");
+
+		var ctx_hist_r = document.getElementById("hist_r");
+		var hist_r = ctx_hist_r.getContext("2d");
+
+		var ctx_hist_g = document.getElementById("hist_g");
+		var hist_g = ctx_hist_g.getContext("2d");
+
+		var ctx_hist_b = document.getElementById("hist_b");
+		var hist_b = ctx_hist_b.getContext("2d");
+
+		var ctx_hist_l = document.getElementById("hist_l");
+		var hist_l = ctx_hist_l.getContext("2d");
+
+		var ctx_novo_hist_r = document.getElementById("novo_hist_r");
+		var novo_hist_r = ctx_novo_hist_r.getContext("2d");
+
+		var ctx_novo_hist_g = document.getElementById("novo_hist_g");
+		var novo_hist_g = ctx_novo_hist_g.getContext("2d");
+
+		var ctx_novo_hist_b = document.getElementById("novo_hist_b");
+		var novo_hist_b = ctx_novo_hist_b.getContext("2d");
+
+		var ctx_novo_hist_l = document.getElementById("novo_hist_l");
+		var novo_hist_l = ctx_novo_hist_l.getContext("2d");
+
+		var imgOriginal = new Image();
+		var imgDataOut = new Image();
+
+		// Criando a variável para exibir o fator multiplicativo para alterar a luminância
+		var texto_fator_multiplicativo = document.getElementById("texto_fator_multiplicativo")
+
+		// Criando a variável para exibir resultados de testes (em texto num parágrafo)
+		var testes = document.getElementById("testes");
+
+		/* Slide de controle de número de pontos */
+		var slide_fator_multiplicativo = document.getElementById("slide_fator_multiplicativo");
+		slide_fator_multiplicativo.oninput = function () {
+			alterar_luminancia(this.value / 100);
+			//numero_de_pontos = this.value; // Atualiza o número de pontos
+			//texto_quantidade_pontos.textContent = "Quantidade de pontos: " + numero_de_pontos // Imprime o número de pontos definido
+		}
+
+		//It seems that firefox does not allow you to use getImageData(...) unless the source of the canvas is from the same domain, 
+		//and it does not consider files on your hard drive as being from the same domain as an html document also on your hard drive.	
+		//https://developpaper.com/explain-how-to-solve-the-cross-domain-problem-of-canvas-image-getimagedata-todataurl/
+
+		// Lendo a imagem desejada
+		var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Golden-eyed_tree_frog_%28Agalychnis_annae%29.jpg/320px-Golden-eyed_tree_frog_%28Agalychnis_annae%29.jpg"
+		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg/1024px-%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg";
+		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg/800px-Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg";
+
+		imgOriginal.crossOrigin = '';
+		imgDataOut.crossOrigin = '';
+		imgOriginal.src = imgUrl;
+
+		// Função para ser executada quando a imagem for carregada
+		imgOriginal.onload = function(){alterar_luminancia()}
+
+		function alterar_luminancia(fator_multiplicativo = 1) {
+			// Criando vetores vazios para R, G e B e L
+			// Original
+			var vetor_red = []
+			var vetor_green = []
+			var vetor_blue = []
+			var vetor_light = []
+			// Alterados
+			var novo_vetor_red = []
+			var novo_vetor_green = []
+			var novo_vetor_blue = []
+			var novo_vetor_light = []
+
+			// Vetor para salvar os valores da imagem em HSL (+ canal alpha, apenas para manter o comprimento dos dados originais)
+			var imagem_hsl = []
+
+			// Preenchendo os vetores de R, G e B com 0 nos índices 0 a 255
+			for (let i = 0; i < 256; i += 1) {
+				// Original
+				vetor_red[i] = 0
+				vetor_green[i] = 0
+				vetor_blue[i] = 0
+				// Alterados
+				novo_vetor_red[i] = 0
+				novo_vetor_green[i] = 0
+				novo_vetor_blue[i] = 0
+			};
+
+
+			ctxOriginal.drawImage(imgOriginal, 0, 0);
+			//ctxOutput.drawImage(imgOriginal, 0, 0);
+
+			imgDataOut = ctxOriginal.getImageData(0, 0, 320, 213);
+
+			// Transformando a imagem de RGB para HSL e criando vetores de R, G, B e L (para os histogramas)
+			for (let i = 0; i < imgDataOut.data.length; i += 4) {
+				// Obtendo o valores de transformação do pixel "i" para HSL
+				let hsl = rgbToHsl(imgDataOut.data[i], imgDataOut.data[i + 1], imgDataOut.data[i + 2])
+
+				// Criando os vetores
+				// Vetor Light (L do HSL) - Vetor com os valores de L para cada pixel
+				vetor_light.push(hsl[2])
+
+				// Vetor Red - Vetor com as frequências
+				vetor_red[imgDataOut.data[i]] = vetor_red[imgDataOut.data[i]] + 1
+
+				// Vetor Green - Vetor com as frequências
+				vetor_green[imgDataOut.data[i + 1]] = vetor_green[imgDataOut.data[i + 1]] + 1
+
+				// Vetor Blue - Vetor com as frequências
+				vetor_blue[imgDataOut.data[i + 2]] = vetor_blue[imgDataOut.data[i + 2]] + 1
+
+				// Canal Alpha
+				imgDataOut.data[i + 3] = 255;
+
+				// Salvando o pixel "i" em HSL
+				imagem_hsl.push(hsl[0])
+				imagem_hsl.push(hsl[1])
+				imagem_hsl.push(hsl[2])
+				imagem_hsl.push(imgDataOut.data[i + 3])
+			}
+
+			// Calculando a maior frequência entre os valores de RGB (para ajustar a altura dos gráficos)
+			maximo_r = Math.max.apply(null, vetor_red)
+			maximo_g = Math.max.apply(null, vetor_green)
+			maximo_b = Math.max.apply(null, vetor_blue)
+			maximo_rgb = Math.max(maximo_r, maximo_g, maximo_b)
+
+			// Desnhando histogramas dos valores RGB originais
+			desenhar_histograma(hist_r, vetor_red, "red", maximo_y = maximo_rgb, maximo_x = 255, bins = 255)
+			desenhar_histograma(hist_g, vetor_green, "green", maximo_y = maximo_rgb, maximo_x = 255, bins = 255)
+			desenhar_histograma(hist_b, vetor_blue, "blue", maximo_y = maximo_rgb, maximo_x = 255, bins = 255)
+
+
+			// Média da luminância
+			media_luminancia = media_vetor(vetor_light)
+
+			// Fator multiplicativo (para ajustar a luminância) - Fornecido como parãmetro da função
+			// fator_multiplicativo = 1
+			texto_fator_multiplicativo.textContent = "Fator multiplicativo para alterar a luminância: " + fator_multiplicativo
+
+			// Reajustando a luminância e voltando a imagem para RGB
+			for (let i = 0; i < imgDataOut.data.length; i += 4) {
+				// Ajustando a luminância (para aumentar o contraste)
+				nova_luminancia = ((imagem_hsl[i + 2] - media_luminancia) * fator_multiplicativo) + media_luminancia
+				if (nova_luminancia < 0) {
+					nova_luminancia = 0
+				}
+				if (nova_luminancia > 1) {
+					nova_luminancia = 1
+				}
+
+				// Colocando os valores no novo vetor de luminancia
+				novo_vetor_light.push(nova_luminancia)
+
+				// Convertendo o pixel novamente para RGB (com a luminância alterada)
+				// Obtendo o novo valor de RGB
+				rgb = hslToRgb(imagem_hsl[i], imagem_hsl[i + 1], nova_luminancia)
+
+				// Novos vetores de RGB para os histogramas
+				// Novo Vetor Red - Vetor com as frequências
+				novo_vetor_red[rgb[0]] = novo_vetor_red[rgb[0]] + 1
+				// Novo Vetor Green - Vetor com as frequências
+				novo_vetor_green[rgb[1]] = novo_vetor_green[rgb[1]] + 1
+				// Novo Vetor Blue - Vetor com as frequências
+				novo_vetor_blue[rgb[2]] = novo_vetor_blue[rgb[2]] + 1
+
+				// Salvando o pixel "i" com os novos valores RGB
+				imgDataOut.data[i] = rgb[0]
+				imgDataOut.data[i + 1] = rgb[1]
+				imgDataOut.data[i + 2] = rgb[2]
+			}
+
+			// Calculando a maior frequência entre os valores de RGB (para ajustar a altura dos gráficos)
+			novo_maximo_r = Math.max.apply(null, novo_vetor_red)
+			novo_maximo_g = Math.max.apply(null, novo_vetor_green)
+			novo_maximo_b = Math.max.apply(null, novo_vetor_blue)
+			novo_maximo_rgb = Math.max(novo_maximo_r, novo_maximo_g, novo_maximo_b)
+
+			// Desnhando histogramas dos valores RGB originais
+			desenhar_histograma(novo_hist_r, novo_vetor_red, "red", maximo_y = novo_maximo_rgb, maximo_x = 255, bins = 255)
+			desenhar_histograma(novo_hist_g, novo_vetor_green, "green", maximo_y = novo_maximo_rgb, maximo_x = 255, bins = 255)
+			desenhar_histograma(novo_hist_b, novo_vetor_blue, "blue", maximo_y = novo_maximo_rgb, maximo_x = 255, bins = 255)
+
+
+			// Criando o vetor com valores 0 para o histograma de luminância
+			var vetor_light_hist = []
+			var novo_vetor_light_hist = []
+			for (i = 0; i <= 100; i += 1) {
+				vetor_light_hist[i] = 0
+				novo_vetor_light_hist[i] = 0
+			}
+
+			// Vetor do histograma de frequências de luminância (de 0,01 em 0,01)
+			for (i = 0; i < vetor_light.length; i += 1) {
+				vetor_light_hist[Math.round(vetor_light[i] * 100)] = vetor_light_hist[Math.round(vetor_light[i] * 100)] + 1
+				novo_vetor_light_hist[Math.round(novo_vetor_light[i] * 100)] = novo_vetor_light_hist[Math.round(novo_vetor_light[i] * 100)] + 1
+			}
+
+			// Imprimindo os testes
+			// testes.textContent = "a"
+
+			// Desenhando o histograma de luminância original
+			desenhar_histograma(hist_l, vetor_light_hist, "black", maximo_y = Math.max.apply(null, vetor_light_hist), maximo_x = 1, bins = 100)
+			// Desenhando o histograma de novas luminâncias
+			desenhar_histograma(novo_hist_l, novo_vetor_light_hist, "black", maximo_y = Math.max.apply(null, novo_vetor_light_hist), maximo_x = 1, bins = 100)
+
+			// Imprimindo resultado da imagem
+			ctxOutput.putImageData(imgDataOut, 0, 0);
+		};
+
+		// Função de desenhar os histogramas
+		function desenhar_histograma(ctx, vetor, cor, maximo_y = 300, maximo_x = 255, bins = 255, altura_da_tela = 300) {
+			ctx.restore()
+			ctx.clearRect(0, 0, altura_da_tela, altura_da_tela);
+
+			// Margem inferior e esquerda
+			m_ie = 30
+			// Margem superior e direita
+			m_sd = 5
+
+			// Espessura da linha
+			espessura = 255 / bins
+
+			// "Legenda" dos eixos
+			// Tamanho do texto e fonte
+			ctx.font = "15px Arial";
+
+			// Transladando e rotacionado a imagem para escrever inclinado no eixo y
+			ctx.translate(m_ie, 0);
+			ctx.rotate(-Math.PI / 2);
+
+			// Escrevendo o valor máximo do eixo y
+			ctx.textAlign = "right";
+			ctx.lineWidth = 1;
+			ctx.strokeText(maximo_y, -5, -m_sd);
+
+			// "Descrição" do eixo y
+			ctx.textAlign = "center";
+			ctx.strokeText("Frequência", -((altura_da_tela - m_ie) / 2), -10);
+
+			// Transladando e rotacionado a imagem para voltar ao normal
+			ctx.rotate(Math.PI / 2);
+			ctx.translate(-m_ie, -0);
+
+			// "Descrição" do eixo x
+			ctx.strokeText("Valor", m_ie + ((altura_da_tela - m_ie) / 2), altura_da_tela - m_ie + 25);
+
+			// Origem
+			ctx.strokeText(0, m_ie - 5, altura_da_tela - m_ie + 15);
+
+			// Escrevendo o valor máximo do eixo x
+			ctx.textAlign = "right";
+			ctx.strokeText(maximo_x, m_ie + 255 + 1, altura_da_tela - m_ie + 20);
+
+			// Transladando e rotacionado a imagem para a origem ficar no canto inferior esquedo e o eixo y crescer positivamenta para cima
+			// Transladando a origem
+			ctx.translate(0, altura_da_tela);
+			// Invertendo o eixo y
+			ctx.scale(1, -1);
+
+			// Desenhando o histograma - linha a linha
+			ctx.beginPath()
+			for (i = 0; i < vetor.length; i += 1) {
+				// Espessura da linha
+				ctx.lineWidth = espessura;
+
+				// Desenhando linha do histograma com a correção para os valores ficarem dentro dos eixos (e a altura máxima corrigida de acordo com o valor máximo informado)
+				ctx.moveTo(m_ie + 1 + (i * espessura), m_ie);
+				ctx.lineTo(m_ie + 1 + (i * espessura), m_ie + (vetor[i] / maximo_y) * (altura_da_tela - (m_ie + m_sd)));
+
+				// Cor da linha
+				ctx.strokeStyle = cor;
+			}
+			ctx.stroke();
+
+			// Desenhando eixos
+			ctx.beginPath()
+			ctx.lineWidth = 1;
+
+			// Eixo y
+			ctx.moveTo(m_ie, m_ie);
+			ctx.lineTo(m_ie, altura_da_tela - m_sd);
+
+			// Eixo x
+			ctx.moveTo(m_ie, m_ie);
+			ctx.lineTo(altura_da_tela - m_sd, m_ie);
+
+			// Marcação no eixo y (máximo de y)
+			ctx.moveTo(m_ie, altura_da_tela - m_sd);
+			ctx.lineTo(m_ie - m_sd, altura_da_tela - m_sd);
+
+			// Marcação no eixo x (máximo de x)
+			ctx.moveTo(m_ie + 255 + 1, m_ie);
+			ctx.lineTo(m_ie + 255 + 1, m_ie - m_sd);
+
+			ctx.strokeStyle = "black";
+			ctx.stroke();
+
+			// Transladando e rotacionado a imagem para a origem para voltar ao normal
+			// Transladando a origem
+			ctx.translate(0, altura_da_tela);
+			// Invertendo o eixo y
+			ctx.scale(1, -1);
+		}
+
+		// Função para converter o pixel em RGB para HSL - Fonte: https://stackoverflow.com/questions/18800863/shift-rgb-one-color-to-another-color-of-image-html-5-canvas
+		function rgbToHsl(r, g, b) {
+			r /= 255, g /= 255, b /= 255;
+			var max = Math.max(r, g, b), min = Math.min(r, g, b);
+			var h, s, l = (max + min) / 2;
+
+			if (max == min) {
+				h = s = 0; // achromatic
+			} else {
+				var d = max - min;
+				s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				switch (max) {
+					case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+					case g: h = (b - r) / d + 2; break;
+					case b: h = (r - g) / d + 4; break;
+				}
+				h /= 6;
+			}
+
+			return [h, s, l];
+		}
+
+		// Função para converter o pixel em HSL para RGB - Fonte: https://stackoverflow.com/questions/18800863/shift-rgb-one-color-to-another-color-of-image-html-5-canvas
+		function hslToRgb(h, s, l) {
+			var r, g, b;
+
+			if (s == 0) {
+				r = g = b = l; // achromatic
+			} else {
+				function hue2rgb(p, q, t) {
+					if (t < 0) t += 1;
+					if (t > 1) t -= 1;
+					if (t < 1 / 6) return p + (q - p) * 6 * t;
+					if (t < 1 / 2) return q;
+					if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+					return p;
+				}
+
+				var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+				var p = 2 * l - q;
+				r = hue2rgb(p, q, h + 1 / 3);
+				g = hue2rgb(p, q, h);
+				b = hue2rgb(p, q, h - 1 / 3);
+			}
+			return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]; // Foi alterado o retorno para os valores voltarem arredondados (caso contrário, aconteciam problemas com o RGB em número não inteiros)
+			// return [r * 255, g * 255, b * 255]; // Retorno original
+		}
+
+		// Função para calcular a média do vetor
+		function media_vetor(array) {
+			var total = 0;
+			var contador = 0;
+
+			array.forEach(function (item, index) {
+				total += item;
+				contador++;
+			});
+
+			return total / contador;
+		}
+	</script>
+
+	<!-- <p>
+		Tentar esse tutorial: <a href="http://rembound.com/articles/how-to-load-and-draw-images-with-html5-canvas">How
+			to load with html5 Canvas</a>
+	</p> -->
+
+</body>
+
+</html>
