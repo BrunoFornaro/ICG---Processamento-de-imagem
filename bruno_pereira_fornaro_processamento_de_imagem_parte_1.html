@@ -86,10 +86,16 @@
 				align-items: center;
 				color: white;
 				font-family: sans-serif;
-				font-weight: 400;
+				font-weight: 600;
 				background-color: #04AA6D;
 				border-radius: 5px;
 				border-width: 1px;
+				margin: 0.1em;
+			}
+
+			.centralizar {
+				display: flex;
+				justify-content: center;
 			}
 		</style>
 </head>
@@ -154,28 +160,23 @@
 		<!-- Tópico 2 -->
 		<h3>Convolução</h3>
 
-		<button type="button" onclick="alterar_tamanho_da_matriz(-2)">-</button>
-		<button type="button" onclick="alterar_tamanho_da_matriz(2)">+</button>
+		<!-- Botões para diminuir e aumentar a matriz de convolução -->
+		<div class="centralizar">
+			<button type="button" onclick="alterar_tamanho_da_matriz(-2)">-</button>
+			<button type="button" onclick="alterar_tamanho_da_matriz(2)">+</button>
+		</div>
+
+
 		<!-- Tabela para entrada de valores para a convolução -->
-		<div id="tabela_convolucao"></div>
-		<!-- <table>
-			<tr>
-				<td><input id="celula_1" type="text" value="-1"></td>
-				<td><input id="celula_2" type="text" value="-1"></td>
-				<td><input id="celula_3" type="text" value="-1"></td>
-			</tr>
-			<tr>
-				<td><input id="celula_4" type="text" value="0"></td>
-				<td><input id="celula_5" type="text" value="0"></td>
-				<td><input id="celula_6" type="text" value="0"></td>
-			</tr>
-			<tr>
-				<td><input id="celula_7" type="text" value="1"></td>
-				<td><input id="celula_8" type="text" value="1"></td>
-				<td><input id="celula_9" type="text" value="1"></td>
-			</tr>
-		</table> -->
-		<button type="button" onclick="aplicar_convolucao()">Aplicar</button>
+		<div id="tabela_convolucao" class="centralizar"></div>
+
+		<!-- Botões para definir a matriz como blur e para aplicar a matriz a imagem -->
+		<div class="centralizar">
+			<button type="button"
+				onclick="criar_tabela_inputs('tabela_convolucao', reiniciar = true, blur = true)">Blur</button>
+			<button type="button" onclick="aplicar_convolucao()">Aplicar</button>
+		</div>
+
 
 		<figure>
 			<div class="parte_2">
@@ -194,6 +195,11 @@
 		<p>FLEXIPLE - Average or Arithmetic mean of an array using Javascript. Disponível em: <a
 				href="https://flexiple.com/get-average-of-array-javascript/"
 				target="_blank">https://flexiple.com/get-average-of-array-javascript/</a>. Acessado 8 de dezembro de
+			2021.</p>
+		<p>MDN Web Docs - Traversing an HTML table with JavaScript and DOM Interfaces. Disponível em: <a
+				href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces"
+				target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces</a>.
+			Acessado 12 de dezembro de
 			2021.</p>
 
 	</div>
@@ -254,7 +260,7 @@
 		// var celula_8 = document.getElementById("celula_8");
 		// var celula_9 = document.getElementById("celula_9");
 		var tamanho = 3
-		criar_tabela_inputs(div = "tabela_convolucao", tamanho=tamanho)
+		criar_tabela_inputs(div = "tabela_convolucao")
 		celulas = document.getElementsByClassName("celulas")
 		filtro = obter_filtro(celulas)
 
@@ -303,11 +309,11 @@
 
 		function obter_filtro(celulas) {
 			filtro = []
-			tamanho = Math.pow(celulas.length, 1 / 2)
-			for (i = 0; i < tamanho; i++) {
+			tamanho_filtro = Math.pow(celulas.length, 1 / 2)
+			for (i = 0; i < tamanho_filtro; i++) {
 				linha = []
-				for (j = 0; j < tamanho; j++) {
-					indice = (i * tamanho) + j
+				for (j = 0; j < tamanho_filtro; j++) {
+					indice = (i * tamanho_filtro) + j
 					linha.push(eval(celulas[indice].value))
 				}
 				filtro.push(linha)
@@ -315,47 +321,50 @@
 			return filtro
 		}
 
-		function criar_tabela_inputs(div, tamanho = 3, reiniciar = false) {
+		function criar_tabela_inputs(div, reiniciar = false, blur = false) {
+			valores_das_celulas = [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]
+
 			let local = document.getElementById(div)
 			let table = document.createElement("table")
+			if (reiniciar == true) {
+				valores_das_celulas = obter_filtro(celulas)
+				local.removeChild(local.firstChild)
+			}
 			for (i = 0; i < tamanho; i += 1) {
 				let row = document.createElement("tr");
 				for (j = 0; j < tamanho; j += 1) {
 					let cell = document.createElement("td");
 					let input = document.createElement("INPUT");
 					input.className = "celulas"
-					input.setAttribute("value", 1 / (tamanho * tamanho))
+					if (blur == true) {
+						input.setAttribute("value", 1 / (tamanho * tamanho))
+					} else if ((i < valores_das_celulas.length) & (j < valores_das_celulas.length)) {
+						input.setAttribute("value", valores_das_celulas[i][j])
+					} else {
+						input.setAttribute("value", 0)
+					}
 					input.setAttribute("type", "text")
-					// input.type = text
 					cell.appendChild(input)
 					row.appendChild(cell)
 				}
 				table.appendChild(row)
 			}
-			if (reiniciar == true){
-				local.removeChild(local.firstChild)
-			}
 			local.appendChild(table)
 		}
 
-		function alterar_tamanho_da_matriz(acrescimo){
+		function alterar_tamanho_da_matriz(acrescimo) {
 			tamanho += acrescimo
-			if (tamanho < 3){
+			if (tamanho < 3) {
 				tamanho = 3
 			}
-			criar_tabela_inputs(div = "tabela_convolucao", tamanho=tamanho, reiniciar=true)
+			criar_tabela_inputs(div = "tabela_convolucao", reiniciar = true)
 			celulas = document.getElementsByClassName("celulas")
 		}
 
 
 		function aplicar_convolucao(filtro = [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]) {
-			// filtro_3x3 = [
-			// 	[eval(celula_1.value), eval(celula_2.value), eval(celula_3.value)],
-			// 	[eval(celula_4.value), eval(celula_5.value), eval(celula_6.value)],
-			// 	[eval(celula_7.value), eval(celula_8.value), eval(celula_9.value)]
-			// ]
-			//testes.textContent = filtro_3x3
 			filtro = obter_filtro(celulas)
+			borda = Math.floor(filtro.length / 2)
 
 			ctxConvolucao.drawImage(imgConvolucao, 0, 0);
 
@@ -373,20 +382,24 @@
 
 			// Loop aninhado para percorrer a imagem pixel a pixel, de cima para baixo da esquerda para a direita (como se lê um texto)
 			// Loop das linhas
-			for (let i = 1; i < altura_da_imagem; i += 1) {
+			for (let i = 0; i <= (altura_da_imagem); i += 1) {
 				// Loop das colunas
-				for (let j = 1; j < largura_da_imagem; j += 1) {
+				for (let j = 0; j <= (largura_da_imagem); j += 1) {
 					// Zerando o valor para o resultado da convolução do pixel
 					let resultado = 0
 					// Percorrendo o filtro e obtendo o resultado da convolução
 					for (let linha = 0; linha < filtro.length; linha += 1) {
 						//testes.textContent = filtro_3x3[linha].length
 						for (let coluna = 0; coluna < filtro[linha].length; coluna += 1) {
-							// Obtendo o índice do píxel (no formato RGBA com o pixels indexados como uma linha, com as linhas concatenadas)
-							indice_pixel = ((j + coluna - 1) * 4) + ((i + linha - 1) * largura_da_imagem * 4)
+							// Aplicando a matriz de convolução para os pixel da imagem, considerando na borda que os pixel além da borda têm valor 0
+							if (((i + linha - borda) >= 0) & ((j + coluna - borda) >= 0)) {
+								// Obtendo o índice do píxel (no formato RGBA com o pixels indexados como uma linha, com as linhas concatenadas)
+								indice_pixel = ((j + coluna - borda) * 4) + ((i + linha - borda) * largura_da_imagem * 4)
 
-							// Adicionando o valor dos pesos ao resultado da convolução
-							resultado += imgConvolucaoAlterada.data[indice_pixel] * filtro[linha][coluna]
+								// Adicionando o valor dos pesos ao resultado da convolução
+								resultado += imgConvolucaoAlterada.data[indice_pixel] * filtro[linha][coluna]
+
+							}
 
 						}
 					}
