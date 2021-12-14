@@ -2,6 +2,7 @@
 <html lang="pt-br">
 
 <!-- "Configurações" do documento -->
+
 <head>
 	<!-- Codificação da página -->
 	<meta charset="UTF-8">
@@ -44,8 +45,12 @@
 				margin-right: 5%;
 			}
 
-			canvas {
+			.parte_1 canvas {
 				width: 19.5%;
+			}
+
+			.parte_2 canvas {
+				width: 49.5%;
 			}
 
 			.centralizar-texto {
@@ -64,16 +69,42 @@
 				background: #04AA6D;
 				cursor: pointer;
 			}
+
+			input {
+				width: 2em;
+				height: 2em;
+				text-align: right;
+				align-items: center;
+				border-radius: 5px;
+				border-color: gray;
+			}
+
+			button {
+				width: 5em;
+				height: 2em;
+				text-align: center;
+				align-items: center;
+				color: white;
+				font-family: sans-serif;
+				font-weight: 400;
+				background-color: #04AA6D;
+				border-radius: 5px;
+				border-width: 1px;
+			}
 		</style>
 </head>
 
 <!-- Corpo do documento -->
+
 <body>
 	<div id="div-externa">
 		<!-- Título -->
 		<h1> Processamento de imagens</h1>
 		<!-- Subtítulo -->
 		<h2>Leitura, escrita e processamento de imagens com Canvas e JavaScript.</h2>
+
+		<!-- Tópico 1 -->
+		<h3>Histograma de frequências da luminância</h3>
 
 		<!-- Texto inicial explicativo -->
 		<p>Nesta primeira atividade de processamento de imagem está sendo feita a leitura dos pixels de uma imagem em
@@ -100,21 +131,58 @@
 
 		<!-- Imagens Canvas-->
 		<figure>
-			<!-- Imagem original -->
-			<canvas id="imagemOriginal" width="320" height="213"></canvas>
-			<!-- Histogramas da imagem original -->
-			<canvas id="hist_r" width="300" height="300"></canvas>
-			<canvas id="hist_g" width="300" height="300"></canvas>
-			<canvas id="hist_b" width="300" height="300"></canvas>
-			<canvas id="hist_l" width="300" height="300"></canvas>
-			<br>
-			<!-- Imagem alterada -->
-			<canvas id="imagemOutput" width="320" height="213"></canvas>
-			<!-- Histogramas da imagem alterada -->
-			<canvas id="novo_hist_r" width="300" height="300"></canvas>
-			<canvas id="novo_hist_g" width="300" height="300"></canvas>
-			<canvas id="novo_hist_b" width="300" height="300"></canvas>
-			<canvas id="novo_hist_l" width="300" height="300"></canvas>
+			<div class="parte_1">
+				<!-- Imagem original -->
+				<canvas id="imagemOriginal" width="320" height="213"></canvas>
+				<!-- Histogramas da imagem original -->
+				<canvas id="hist_r" width="300" height="300"></canvas>
+				<canvas id="hist_g" width="300" height="300"></canvas>
+				<canvas id="hist_b" width="300" height="300"></canvas>
+				<canvas id="hist_l" width="300" height="300"></canvas>
+				<br>
+				<!-- Imagem alterada -->
+				<canvas id="imagemOutput" width="320" height="213"></canvas>
+				<!-- Histogramas da imagem alterada -->
+				<canvas id="novo_hist_r" width="300" height="300"></canvas>
+				<canvas id="novo_hist_g" width="300" height="300"></canvas>
+				<canvas id="novo_hist_b" width="300" height="300"></canvas>
+				<canvas id="novo_hist_l" width="300" height="300"></canvas>
+			</div>
+		</figure>
+		<br>
+
+		<!-- Tópico 2 -->
+		<h3>Convolução</h3>
+
+		<button type="button" onclick="alterar_tamanho_da_matriz(-2)">-</button>
+		<button type="button" onclick="alterar_tamanho_da_matriz(2)">+</button>
+		<!-- Tabela para entrada de valores para a convolução -->
+		<div id="tabela_convolucao"></div>
+		<!-- <table>
+			<tr>
+				<td><input id="celula_1" type="text" value="-1"></td>
+				<td><input id="celula_2" type="text" value="-1"></td>
+				<td><input id="celula_3" type="text" value="-1"></td>
+			</tr>
+			<tr>
+				<td><input id="celula_4" type="text" value="0"></td>
+				<td><input id="celula_5" type="text" value="0"></td>
+				<td><input id="celula_6" type="text" value="0"></td>
+			</tr>
+			<tr>
+				<td><input id="celula_7" type="text" value="1"></td>
+				<td><input id="celula_8" type="text" value="1"></td>
+				<td><input id="celula_9" type="text" value="1"></td>
+			</tr>
+		</table> -->
+		<button type="button" onclick="aplicar_convolucao()">Aplicar</button>
+
+		<figure>
+			<div class="parte_2">
+				<!-- Imagem convulução -->
+				<canvas id="imagemConvolucao" width="3689" height="1332"></canvas>
+				<canvas id="imagemConvolucaoAlterada" width="3689" height="1332"></canvas>
+			</div>
 		</figure>
 
 		<!-- Bibliografia -->
@@ -133,12 +201,22 @@
 
 	<!-- JavaScript -->
 	<script>
+
+		// Criando a variável para exibir resultados de testes (em texto num parágrafo)
+		var testes = document.getElementById("testes");
+
 		// Criando as variáveis para editar os Canvas pelo JavaScript (pelo id do respectivo Canvas)
 		var canvasOriginal = document.getElementById("imagemOriginal");
 		var ctxOriginal = canvasOriginal.getContext("2d");
 
 		var canvasOut = document.getElementById("imagemOutput");
 		var ctxOutput = canvasOut.getContext("2d");
+
+		var canvasConvolucao = document.getElementById("imagemConvolucao");
+		var ctxConvolucao = canvasConvolucao.getContext("2d");
+
+		var canvasConvolucaoAlterada = document.getElementById("imagemConvolucaoAlterada");
+		var ctxConvolucaoAlterada = canvasConvolucaoAlterada.getContext("2d");
 
 		var ctx_hist_r = document.getElementById("hist_r");
 		var hist_r = ctx_hist_r.getContext("2d");
@@ -164,14 +242,30 @@
 		var ctx_novo_hist_l = document.getElementById("novo_hist_l");
 		var novo_hist_l = ctx_novo_hist_l.getContext("2d");
 
+
+		// Inputs para a convolução
+		// var celula_1 = document.getElementById("celula_1");
+		// var celula_2 = document.getElementById("celula_2");
+		// var celula_3 = document.getElementById("celula_3");
+		// var celula_4 = document.getElementById("celula_4");
+		// var celula_5 = document.getElementById("celula_5");
+		// var celula_6 = document.getElementById("celula_6");
+		// var celula_7 = document.getElementById("celula_7");
+		// var celula_8 = document.getElementById("celula_8");
+		// var celula_9 = document.getElementById("celula_9");
+		var tamanho = 3
+		criar_tabela_inputs(div = "tabela_convolucao", tamanho=tamanho)
+		celulas = document.getElementsByClassName("celulas")
+		filtro = obter_filtro(celulas)
+
 		var imgOriginal = new Image();
 		var imgDataOut = new Image();
+		var imgConvolucao = new Image();
+		var imgConvolucaoAlterada = new Image();
 
 		// Criando a variável para exibir o fator multiplicativo para alterar a luminância
 		var texto_fator_multiplicativo = document.getElementById("texto_fator_multiplicativo")
 
-		// Criando a variável para exibir resultados de testes (em texto num parágrafo)
-		var testes = document.getElementById("testes");
 
 		/* Slide de controle de número de pontos */
 		var slide_fator_multiplicativo = document.getElementById("slide_fator_multiplicativo");
@@ -192,10 +286,138 @@
 
 		imgOriginal.crossOrigin = '';
 		imgDataOut.crossOrigin = '';
+		imgConvolucao.crossOrigin = '';
+		imgConvolucaoAlterada.crossOrigin = '';
 		imgOriginal.src = imgUrl;
 
+		// Imagem convolução
+		imgConvolucao.src = "https://upload.wikimedia.org/wikipedia/commons/e/e7/Foto_em_preto_e_branco_do_Centro_de_Eventos_da_UFSC.jpg"
+
 		// Função para ser executada quando a imagem for carregada
-		imgOriginal.onload = function(){alterar_luminancia()}
+		imgOriginal.onload = function () { alterar_luminancia() }
+
+		imgConvolucao.onload = function () {
+			filtro = obter_filtro(celulas)
+			aplicar_convolucao(filtro)
+		}
+
+		function obter_filtro(celulas) {
+			filtro = []
+			tamanho = Math.pow(celulas.length, 1 / 2)
+			for (i = 0; i < tamanho; i++) {
+				linha = []
+				for (j = 0; j < tamanho; j++) {
+					indice = (i * tamanho) + j
+					linha.push(eval(celulas[indice].value))
+				}
+				filtro.push(linha)
+			}
+			return filtro
+		}
+
+		function criar_tabela_inputs(div, tamanho = 3, reiniciar = false) {
+			let local = document.getElementById(div)
+			let table = document.createElement("table")
+			for (i = 0; i < tamanho; i += 1) {
+				let row = document.createElement("tr");
+				for (j = 0; j < tamanho; j += 1) {
+					let cell = document.createElement("td");
+					let input = document.createElement("INPUT");
+					input.className = "celulas"
+					input.setAttribute("value", 1 / (tamanho * tamanho))
+					input.setAttribute("type", "text")
+					// input.type = text
+					cell.appendChild(input)
+					row.appendChild(cell)
+				}
+				table.appendChild(row)
+			}
+			if (reiniciar == true){
+				local.removeChild(local.firstChild)
+			}
+			local.appendChild(table)
+		}
+
+		function alterar_tamanho_da_matriz(acrescimo){
+			tamanho += acrescimo
+			if (tamanho < 3){
+				tamanho = 3
+			}
+			criar_tabela_inputs(div = "tabela_convolucao", tamanho=tamanho, reiniciar=true)
+			celulas = document.getElementsByClassName("celulas")
+		}
+
+
+		function aplicar_convolucao(filtro = [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]) {
+			// filtro_3x3 = [
+			// 	[eval(celula_1.value), eval(celula_2.value), eval(celula_3.value)],
+			// 	[eval(celula_4.value), eval(celula_5.value), eval(celula_6.value)],
+			// 	[eval(celula_7.value), eval(celula_8.value), eval(celula_9.value)]
+			// ]
+			//testes.textContent = filtro_3x3
+			filtro = obter_filtro(celulas)
+
+			ctxConvolucao.drawImage(imgConvolucao, 0, 0);
+
+			// Passando a altura e a largura da imagem
+			largura_da_imagem = imgConvolucao.width
+			altura_da_imagem = imgConvolucao.height
+
+			imgConvolucaoAlterada = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
+			imgConvolucaoAlterada2 = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
+
+
+
+			// Criando vetor vazio para armazenar os valores para alterar a imagem
+			vetor_imagem_alterada = []
+
+			// Loop aninhado para percorrer a imagem pixel a pixel, de cima para baixo da esquerda para a direita (como se lê um texto)
+			// Loop das linhas
+			for (let i = 1; i < altura_da_imagem; i += 1) {
+				// Loop das colunas
+				for (let j = 1; j < largura_da_imagem; j += 1) {
+					// Zerando o valor para o resultado da convolução do pixel
+					let resultado = 0
+					// Percorrendo o filtro e obtendo o resultado da convolução
+					for (let linha = 0; linha < filtro.length; linha += 1) {
+						//testes.textContent = filtro_3x3[linha].length
+						for (let coluna = 0; coluna < filtro[linha].length; coluna += 1) {
+							// Obtendo o índice do píxel (no formato RGBA com o pixels indexados como uma linha, com as linhas concatenadas)
+							indice_pixel = ((j + coluna - 1) * 4) + ((i + linha - 1) * largura_da_imagem * 4)
+
+							// Adicionando o valor dos pesos ao resultado da convolução
+							resultado += imgConvolucaoAlterada.data[indice_pixel] * filtro[linha][coluna]
+
+						}
+					}
+
+					// Obtendo o índice do píxel central (no formato RGBA com o pixels indexados como uma linha, com as linhas concatenadas)
+					indice_pixel = (j * 4) + (i * largura_da_imagem * 4)
+
+					// Arredondando o resultado para evitar problemas com pontos flutuantes
+					resultado = Math.round(resultado)
+
+					if (resultado < 0) {
+						resultado = 0;
+					}
+					else if (resultado > 255) {
+						resultado = 255
+					}
+
+
+					// Adicionando o resultado na imagem resultante
+					imgConvolucaoAlterada2.data[indice_pixel] = resultado
+					imgConvolucaoAlterada2.data[indice_pixel + 1] = resultado
+					imgConvolucaoAlterada2.data[indice_pixel + 2] = resultado
+					//imgConvolucaoAlterada.data[indice_pixel+3] = 255
+
+				}
+			}
+			// Imprimindo resultado 
+			ctxConvolucaoAlterada.putImageData(imgConvolucaoAlterada2, 0, 0);
+
+		}
+
 
 		function alterar_luminancia(fator_multiplicativo = 1) {
 			// Criando vetores vazios para R, G e B e L
@@ -228,6 +450,7 @@
 
 			ctxOriginal.drawImage(imgOriginal, 0, 0);
 			//ctxOutput.drawImage(imgOriginal, 0, 0);
+			// ctxConvolucao.drawImage(imgConvolucao, 0, 0);
 
 			imgDataOut = ctxOriginal.getImageData(0, 0, 320, 213);
 
@@ -504,11 +727,6 @@
 			return total / contador;
 		}
 	</script>
-
-	<!-- <p>
-		Tentar esse tutorial: <a href="http://rembound.com/articles/how-to-load-and-draw-images-with-html5-canvas">How
-			to load with html5 Canvas</a>
-	</p> -->
 
 </body>
 
