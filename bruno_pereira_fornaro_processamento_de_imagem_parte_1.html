@@ -70,7 +70,7 @@
 				cursor: pointer;
 			}
 
-			input {
+			.celulas {
 				width: 2em;
 				height: 2em;
 				text-align: right;
@@ -96,6 +96,18 @@
 			.centralizar {
 				display: flex;
 				justify-content: center;
+			}
+
+			.input_link {
+				width: 30em;
+				height: 2em;
+				text-align: left;
+				align-items: center;
+				font-family: sans-serif;
+				border-radius: 5px;
+				border-width: 1px;
+				margin: 0.1em;
+				padding-left: 0.5em;
 			}
 		</style>
 </head>
@@ -129,6 +141,9 @@
 		<!-- Paragrafo para testes -->
 		<p id="testes"></p>
 
+		<input type="text" id="link_imagem_luminancia" class="input_link" placeholder="Insira o link da imagem desejada">
+		<button type="button" onclick="atualizar_link('luminancia')">Aplicar</button>
+
 		<!-- Paragrafo para exibir o fator multiplicativo para o ajuste da luminância utilizado -->
 		<p id="texto_fator_multiplicativo"></p>
 
@@ -139,7 +154,7 @@
 		<figure>
 			<div class="parte_1">
 				<!-- Imagem original -->
-				<canvas id="imagemOriginal" width="320" height="213"></canvas>
+				<canvas id="imagemOriginal" width="0" height="0"></canvas>
 				<!-- Histogramas da imagem original -->
 				<canvas id="hist_r" width="300" height="300"></canvas>
 				<canvas id="hist_g" width="300" height="300"></canvas>
@@ -147,7 +162,7 @@
 				<canvas id="hist_l" width="300" height="300"></canvas>
 				<br>
 				<!-- Imagem alterada -->
-				<canvas id="imagemOutput" width="320" height="213"></canvas>
+				<canvas id="imagemOutput" width="0" height="0"></canvas>
 				<!-- Histogramas da imagem alterada -->
 				<canvas id="novo_hist_r" width="300" height="300"></canvas>
 				<canvas id="novo_hist_g" width="300" height="300"></canvas>
@@ -160,29 +175,45 @@
 		<!-- Tópico 2 -->
 		<h3>Convolução</h3>
 
-		<!-- Botões para diminuir e aumentar a matriz de convolução -->
+		<p>Agora, nesta segunda etapa, vamos lidar com matrizes de convulução. Vamos ler os pixels de forma análoga a
+			etapa anterior, mas nesse caso a imagem resultante vai ser obtida de acordo com um calculo feito com os
+			pixels ao seu redor. Vamos observar a tabela mais abaixo para entender melhor o processo. Para a matriz
+			padrão que é exibida, temos uma matriz 3 por 3 e isso no indica que para cada pixel vamos multiplicar o seu
+			valor pelo peso no valor do centro da matriz e, da mesma forma, seus pixels vizinhos terão seus valores
+			multiplicados pelos respectivos pesos na posição da matriz. Após isso, somamos todos os resultados e
+			atribuimos para o valor do pixel central na imagem resultante.</p>
+		<p>Podemos ver que já temos uma imagem padrão, assim como na primeira parte, porém nesse caso vamos utilizar
+			necessáriamente uma imagem em escala de cinza (preto e branco). É possível inserir uma nova imagem e
+			aplicá-la abaixo. Novamente, é recomendado que para testar sejam utilizadas imagem de tamanho pequeno para
+			não tornar o precesso muito lento e que as imagens colocadas sejam da Wikimedia Commons em .jpg para haver
+			mais chances da imagem ser compatível.</p>
+
+		<input type="text" id="link_imagem_convolucao" class="input_link" placeholder="Insira o link da imagem desejada">
+		<button type="button" onclick="atualizar_link('convolucao')">Aplicar</button>
+
+		<p>Além de trocar a imagem utilizada, abaixo podemos alterar a matriz de convolução (com os pesos para calcular a imagem resultante). É possível aumentar e diminuir o tamanho da matriz, alterar os valores de entrada, além de haver um botão para que as entradas da matriz sejam preenchidas automaticamente com os valores necessários para aplicar o efeito de "blur" (desfocar, embaçar), de acordo com o tamanho da matriz utilizada. Quanto maior a matriz utilizada para o blur mais perceptível é o resultado, tente usar matrizes grandes para isso - principalmente se a imagem utilizada for grande.</p>
+		<p>Vale observar que as matrizes de convolução utilizadas sempre serão quadradas e com um número ímpar de linhas e colunas, para o pixel calculado sempre esteja no centro da matriz. Além disso, para o cálculo dos valores da borda da imagem é necessário fazer algum tipo de adaptação, pois não há valores excedendo os indices dos pixels da imagem além da borda. Nesse caso, nas bordas foi considerado que os pixels que precisariam ser calculados mas excedem a imagem têm valor 0 (por isso podemos ver que ao utilizar matrizes maiores fica perceptível que as bordas ficam mais escuras, como ao aplicar o blur por exemplo).</p>
+
+		<!-- Botões de interação para a convolução -->
 		<div class="centralizar">
+			<!-- Botões para diminuir e aumentar a matriz de convolução -->
 			<button type="button" onclick="alterar_tamanho_da_matriz(-2)">-</button>
 			<button type="button" onclick="alterar_tamanho_da_matriz(2)">+</button>
-		</div>
-
-
-		<!-- Tabela para entrada de valores para a convolução -->
-		<div id="tabela_convolucao" class="centralizar"></div>
-
-		<!-- Botões para definir a matriz como blur e para aplicar a matriz a imagem -->
-		<div class="centralizar">
+			<!-- Botões para definir a matriz como blur e para aplicar a matriz a imagem -->
 			<button type="button"
 				onclick="criar_tabela_inputs('tabela_convolucao', reiniciar = true, blur = true)">Blur</button>
 			<button type="button" onclick="aplicar_convolucao()">Aplicar</button>
 		</div>
 
 
+		<!-- Tabela para entrada de valores para a convolução -->
+		<div id="tabela_convolucao" class="centralizar"></div>
+
 		<figure>
 			<div class="parte_2">
 				<!-- Imagem convulução -->
-				<canvas id="imagemConvolucao" width="3689" height="1332"></canvas>
-				<canvas id="imagemConvolucaoAlterada" width="3689" height="1332"></canvas>
+				<canvas id="imagemConvolucao" width="0" height="0"></canvas>
+				<canvas id="imagemConvolucaoAlterada" width="0" height="0"></canvas>
 			</div>
 		</figure>
 
@@ -250,15 +281,6 @@
 
 
 		// Inputs para a convolução
-		// var celula_1 = document.getElementById("celula_1");
-		// var celula_2 = document.getElementById("celula_2");
-		// var celula_3 = document.getElementById("celula_3");
-		// var celula_4 = document.getElementById("celula_4");
-		// var celula_5 = document.getElementById("celula_5");
-		// var celula_6 = document.getElementById("celula_6");
-		// var celula_7 = document.getElementById("celula_7");
-		// var celula_8 = document.getElementById("celula_8");
-		// var celula_9 = document.getElementById("celula_9");
 		var tamanho = 3
 		criar_tabela_inputs(div = "tabela_convolucao")
 		celulas = document.getElementsByClassName("celulas")
@@ -277,8 +299,6 @@
 		var slide_fator_multiplicativo = document.getElementById("slide_fator_multiplicativo");
 		slide_fator_multiplicativo.oninput = function () {
 			alterar_luminancia(this.value / 100);
-			//numero_de_pontos = this.value; // Atualiza o número de pontos
-			//texto_quantidade_pontos.textContent = "Quantidade de pontos: " + numero_de_pontos // Imprime o número de pontos definido
 		}
 
 		//It seems that firefox does not allow you to use getImageData(...) unless the source of the canvas is from the same domain, 
@@ -290,14 +310,38 @@
 		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg/1024px-%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg";
 		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg/800px-Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg";
 
+
+
 		imgOriginal.crossOrigin = '';
 		imgDataOut.crossOrigin = '';
 		imgConvolucao.crossOrigin = '';
 		imgConvolucaoAlterada.crossOrigin = '';
 		imgOriginal.src = imgUrl;
 
+		// Definindo o tamanho das telas Canvas para as imagens para alterar a luminância
+		canvasOriginal.width = imgOriginal.width
+		canvasOriginal.height = imgOriginal.height
+		canvasOut.width = imgOriginal.width
+		canvasOut.height = imgOriginal.height
+
 		// Imagem convolução
 		imgConvolucao.src = "https://upload.wikimedia.org/wikipedia/commons/e/e7/Foto_em_preto_e_branco_do_Centro_de_Eventos_da_UFSC.jpg"
+		imgConvolucao.src = "https://upload.wikimedia.org/wikipedia/commons/c/c9/Adelgundes_of_Portugal%2C_Duchess_of_Guimar%C3%A3es.jpg"
+
+		// Passando a altura e a largura da imagem
+		var largura_da_imagem = imgConvolucao.width
+		var altura_da_imagem = imgConvolucao.height
+
+		// Definindo o tamanho das telas Canvas para as imagens para aplicar a convolução
+		canvasConvolucao.width = imgConvolucao.width
+		canvasConvolucao.height = imgConvolucao.height
+		canvasConvolucaoAlterada.width = imgConvolucao.width
+		canvasConvolucaoAlterada.height = imgConvolucao.height
+
+		// Desenhando a imagem da convolução
+		ctxConvolucao.drawImage(imgConvolucao, 0, 0);
+
+
 
 		// Função para ser executada quando a imagem for carregada
 		imgOriginal.onload = function () { alterar_luminancia() }
@@ -305,6 +349,37 @@
 		imgConvolucao.onload = function () {
 			filtro = obter_filtro(celulas)
 			aplicar_convolucao(filtro)
+		}
+
+		function atualizar_link(imagem) {
+			if (imagem == "luminancia") {
+				imgOriginal.src = document.getElementById("link_imagem_luminancia").value
+
+				// Definindo o tamanho das telas Canvas para as imagens para alterar a luminância
+				canvasOriginal.width = imgOriginal.width
+				canvasOriginal.height = imgOriginal.height
+				canvasOut.width = imgOriginal.width
+				canvasOut.height = imgOriginal.height
+
+				alterar_luminancia(slide_fator_multiplicativo.value / 100)
+			} else if (imagem == "convolucao") {
+				imgConvolucao.src = document.getElementById("link_imagem_convolucao").value
+
+				// Passando a altura e a largura da imagem
+				largura_da_imagem = imgConvolucao.width
+				altura_da_imagem = imgConvolucao.height
+
+				// Definindo o tamanho das telas Canvas para as imagens para aplicar a convolução
+				canvasConvolucao.width = imgConvolucao.width
+				canvasConvolucao.height = imgConvolucao.height
+				canvasConvolucaoAlterada.width = imgConvolucao.width
+				canvasConvolucaoAlterada.height = imgConvolucao.height
+
+				// Desenhando a imagem da convolução
+				ctxConvolucao.drawImage(imgConvolucao, 0, 0);
+				filtro = obter_filtro(celulas)
+				aplicar_convolucao(filtro)
+			}
 		}
 
 		function obter_filtro(celulas) {
@@ -366,11 +441,6 @@
 			filtro = obter_filtro(celulas)
 			borda = Math.floor(filtro.length / 2)
 
-			ctxConvolucao.drawImage(imgConvolucao, 0, 0);
-
-			// Passando a altura e a largura da imagem
-			largura_da_imagem = imgConvolucao.width
-			altura_da_imagem = imgConvolucao.height
 
 			imgConvolucaoAlterada = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
 			imgConvolucaoAlterada2 = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
@@ -392,7 +462,7 @@
 						//testes.textContent = filtro_3x3[linha].length
 						for (let coluna = 0; coluna < filtro[linha].length; coluna += 1) {
 							// Aplicando a matriz de convolução para os pixel da imagem, considerando na borda que os pixel além da borda têm valor 0
-							if (((i + linha - borda) >= 0) & ((j + coluna - borda) >= 0)) {
+							if (((i + linha - borda) >= 0) & ((j + coluna - borda) >= 0) & ((j + coluna - borda) < largura_da_imagem) & ((i + linha - borda) < altura_da_imagem)) {
 								// Obtendo o índice do píxel (no formato RGBA com o pixels indexados como uma linha, com as linhas concatenadas)
 								indice_pixel = ((j + coluna - borda) * 4) + ((i + linha - borda) * largura_da_imagem * 4)
 
@@ -465,7 +535,7 @@
 			//ctxOutput.drawImage(imgOriginal, 0, 0);
 			// ctxConvolucao.drawImage(imgConvolucao, 0, 0);
 
-			imgDataOut = ctxOriginal.getImageData(0, 0, 320, 213);
+			imgDataOut = ctxOriginal.getImageData(0, 0, canvasOriginal.width, canvasOriginal.height);
 
 			// Transformando a imagem de RGB para HSL e criando vetores de R, G, B e L (para os histogramas)
 			for (let i = 0; i < imgDataOut.data.length; i += 4) {
