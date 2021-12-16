@@ -134,14 +134,20 @@
 		<p class="centralizar-texto">nova luminância = ((luminância original - media da luminância original)(fator
 			multiplicativo para o ajuste)) + media da luminância original</p>
 		<p>Abaixo é possível ver a imagem original e seus histogramas de R, G, B e L, respectivamente, na primeira linha
-			e na segunda linha a imagem alterada e seus respectivos histogramas da mesma forma. Além disso, há abaixo
+			e na segunda linha a imagem alterada e seus respectivos histogramas da mesma forma. É possível alterar a
+			imagem utilizada, para isso deve ser inserido abaixo o
+			link de onde a imagem está sendo servida. É recomendado que sejam utilizadas imagem de tamanho
+			pequeno para não tornar o precesso muito lento e que as imagens colocadas sejam da Wikimedia Commons em .jpg
+			para haver mais chances da imagem ser compatível. Além disso, também há abaixo
 			uma barra de ajuste para o fator multiplicativo da alteração de luminância, mude os valores para ver a
 			diferença no resultado.</p>
 
 		<!-- Paragrafo para testes -->
 		<p id="testes"></p>
 
-		<input type="text" id="link_imagem_luminancia" class="input_link" placeholder="Insira o link da imagem desejada">
+		<!-- Entrada de link para inserir uma nova imagem e botão para aplicar a alteração -->
+		<input type="text" id="link_imagem_luminancia" class="input_link"
+			placeholder="Insira o link da imagem desejada">
 		<button type="button" onclick="atualizar_link('luminancia')">Aplicar</button>
 
 		<!-- Paragrafo para exibir o fator multiplicativo para o ajuste da luminância utilizado -->
@@ -175,6 +181,7 @@
 		<!-- Tópico 2 -->
 		<h3>Convolução</h3>
 
+		<!-- Texto de explicação da convulução -->
 		<p>Agora, nesta segunda etapa, vamos lidar com matrizes de convulução. Vamos ler os pixels de forma análoga a
 			etapa anterior, mas nesse caso a imagem resultante vai ser obtida de acordo com um calculo feito com os
 			pixels ao seu redor. Vamos observar a tabela mais abaixo para entender melhor o processo. Para a matriz
@@ -184,15 +191,28 @@
 			atribuimos para o valor do pixel central na imagem resultante.</p>
 		<p>Podemos ver que já temos uma imagem padrão, assim como na primeira parte, porém nesse caso vamos utilizar
 			necessáriamente uma imagem em escala de cinza (preto e branco). É possível inserir uma nova imagem e
-			aplicá-la abaixo. Novamente, é recomendado que para testar sejam utilizadas imagem de tamanho pequeno para
+			aplicá-la abaixo. Novamente, é recomendado testar sejam utilizadas imagem de tamanho pequeno para
 			não tornar o precesso muito lento e que as imagens colocadas sejam da Wikimedia Commons em .jpg para haver
 			mais chances da imagem ser compatível.</p>
 
-		<input type="text" id="link_imagem_convolucao" class="input_link" placeholder="Insira o link da imagem desejada">
+		<!-- Entrada de link para inserir uma nova imagem e botão para aplicar a alteração -->
+		<input type="text" id="link_imagem_convolucao" class="input_link"
+			placeholder="Insira o link da imagem desejada">
 		<button type="button" onclick="atualizar_link('convolucao')">Aplicar</button>
 
-		<p>Além de trocar a imagem utilizada, abaixo podemos alterar a matriz de convolução (com os pesos para calcular a imagem resultante). É possível aumentar e diminuir o tamanho da matriz, alterar os valores de entrada, além de haver um botão para que as entradas da matriz sejam preenchidas automaticamente com os valores necessários para aplicar o efeito de "blur" (desfocar, embaçar), de acordo com o tamanho da matriz utilizada. Quanto maior a matriz utilizada para o blur mais perceptível é o resultado, tente usar matrizes grandes para isso - principalmente se a imagem utilizada for grande.</p>
-		<p>Vale observar que as matrizes de convolução utilizadas sempre serão quadradas e com um número ímpar de linhas e colunas, para o pixel calculado sempre esteja no centro da matriz. Além disso, para o cálculo dos valores da borda da imagem é necessário fazer algum tipo de adaptação, pois não há valores excedendo os indices dos pixels da imagem além da borda. Nesse caso, nas bordas foi considerado que os pixels que precisariam ser calculados mas excedem a imagem têm valor 0 (por isso podemos ver que ao utilizar matrizes maiores fica perceptível que as bordas ficam mais escuras, como ao aplicar o blur por exemplo).</p>
+		<!-- Explicação das funções dos e alterações possíveis na matriz de convolução -->
+		<p>Além de trocar a imagem utilizada, abaixo podemos alterar a matriz de convolução (com os pesos para calcular
+			a imagem resultante). É possível aumentar e diminuir o tamanho da matriz, alterar os valores de entrada,
+			além de haver um botão para que as entradas da matriz sejam preenchidas automaticamente com os valores
+			necessários para aplicar o efeito de "blur" (desfocar, embaçar), de acordo com o tamanho da matriz
+			utilizada. Quanto maior a matriz utilizada para o blur mais perceptível é o resultado, tente usar matrizes
+			grandes para isso - principalmente se a imagem utilizada for grande.</p>
+		<p>Vale observar que as matrizes de convolução utilizadas sempre serão quadradas e com um número ímpar de linhas
+			e colunas, para o pixel calculado sempre esteja no centro da matriz. Além disso, para o cálculo dos valores
+			da borda da imagem é necessário fazer algum tipo de adaptação, pois não há valores excedendo os indices dos
+			pixels da imagem além da borda. Nesse caso, nas bordas foi considerado que os pixels que precisariam ser
+			calculados mas excedem a imagem têm valor 0 (por isso podemos ver que ao utilizar matrizes maiores fica
+			perceptível que as bordas ficam mais escuras, como ao aplicar o blur por exemplo).</p>
 
 		<!-- Botões de interação para a convolução -->
 		<div class="centralizar">
@@ -219,14 +239,19 @@
 
 		<!-- Bibliografia -->
 		<h2>Bibliografia</h2>
+		<!-- Rotacionar o eixo e alterar a origem do Canvas -->
 		<p>STACKOVERFLOW - Drawing rotated text on a HTML5 canvas. Disponível em: <a
 				href="https://stackoverflow.com/questions/3167928/drawing-rotated-text-on-a-html5-canvas"
 				target="_blank">https://stackoverflow.com/questions/3167928/drawing-rotated-text-on-a-html5-canvas</a>.
 			Acessado 8 de dezembro de 2021.</p>
+
+		<!-- Média aritimética dos valores de um array no JavaScript -->
 		<p>FLEXIPLE - Average or Arithmetic mean of an array using Javascript. Disponível em: <a
 				href="https://flexiple.com/get-average-of-array-javascript/"
 				target="_blank">https://flexiple.com/get-average-of-array-javascript/</a>. Acessado 8 de dezembro de
 			2021.</p>
+
+		<!-- Criar uma tabela no HTML pelo JavaScript -->
 		<p>MDN Web Docs - Traversing an HTML table with JavaScript and DOM Interfaces. Disponível em: <a
 				href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces"
 				target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces</a>.
@@ -239,79 +264,91 @@
 	<!-- JavaScript -->
 	<script>
 
-		// Criando a variável para exibir resultados de testes (em texto num parágrafo)
+		/* Criando a variável para exibir resultados de testes (em texto num parágrafo) */
 		var testes = document.getElementById("testes");
 
-		// Criando as variáveis para editar os Canvas pelo JavaScript (pelo id do respectivo Canvas)
+		/* Criando as variáveis para editar os Canvas pelo JavaScript (pelo id do respectivo Canvas) */
+		// Parte 1 - Luminância
+		// Canvas para a imagem original para alterar a luminância
 		var canvasOriginal = document.getElementById("imagemOriginal");
 		var ctxOriginal = canvasOriginal.getContext("2d");
-
+		// Canvas para a imagem com a luminância alterada
 		var canvasOut = document.getElementById("imagemOutput");
 		var ctxOutput = canvasOut.getContext("2d");
-
+		// Canvas para o histograma de vermelho da imagem original
+		var ctx_hist_r = document.getElementById("hist_r");
+		var hist_r = ctx_hist_r.getContext("2d");
+		// Canvas para o histograma de verde da imagem original
+		var ctx_hist_g = document.getElementById("hist_g");
+		var hist_g = ctx_hist_g.getContext("2d");
+		// Canvas para o histograma de azul da imagem original
+		var ctx_hist_b = document.getElementById("hist_b");
+		var hist_b = ctx_hist_b.getContext("2d");
+		// Canvas para o histograma de luminância da imagem original
+		var ctx_hist_l = document.getElementById("hist_l");
+		var hist_l = ctx_hist_l.getContext("2d");
+		// Canvas para o histograma de vermelho da imagem com a luminâcia alterada
+		var ctx_novo_hist_r = document.getElementById("novo_hist_r");
+		var novo_hist_r = ctx_novo_hist_r.getContext("2d");
+		// Canvas para o histograma de verde da imagem com a luminâcia alterada
+		var ctx_novo_hist_g = document.getElementById("novo_hist_g");
+		var novo_hist_g = ctx_novo_hist_g.getContext("2d");
+		// Canvas para o histograma de azul da imagem com a luminâcia alterada
+		var ctx_novo_hist_b = document.getElementById("novo_hist_b");
+		var novo_hist_b = ctx_novo_hist_b.getContext("2d");
+		// Canvas para o histograma de luminância da imagem com a luminâcia alterada
+		var ctx_novo_hist_l = document.getElementById("novo_hist_l");
+		var novo_hist_l = ctx_novo_hist_l.getContext("2d");
+		// Parte 2 - Convolução
+		// Canvas para a imagem original para aplicar a matriz de convolução
 		var canvasConvolucao = document.getElementById("imagemConvolucao");
 		var ctxConvolucao = canvasConvolucao.getContext("2d");
-
+		// Canvas para a imagem alterada pela matriz de convolução
 		var canvasConvolucaoAlterada = document.getElementById("imagemConvolucaoAlterada");
 		var ctxConvolucaoAlterada = canvasConvolucaoAlterada.getContext("2d");
 
-		var ctx_hist_r = document.getElementById("hist_r");
-		var hist_r = ctx_hist_r.getContext("2d");
+		/* Inputs para a convolução */
+		// Definindo o tamanho inicial da matriz de convolução
+		var tamanho = 3;
+		// Criando a tabela de convolução inicial dentro da div de id "tabela_convolucao"
+		criar_tabela_inputs(div = "tabela_convolucao");
+		// Obtendo os valores (e demais atributos) das celulas da tabela de convolução
+		celulas = document.getElementsByClassName("celulas");
+		// Obtendo a matriz com o "filtro" (com pesos da matriz) para a convolução, na forma de array multidimensional (matriz quadrada)
+		filtro = obter_filtro(celulas);
 
-		var ctx_hist_g = document.getElementById("hist_g");
-		var hist_g = ctx_hist_g.getContext("2d");
-
-		var ctx_hist_b = document.getElementById("hist_b");
-		var hist_b = ctx_hist_b.getContext("2d");
-
-		var ctx_hist_l = document.getElementById("hist_l");
-		var hist_l = ctx_hist_l.getContext("2d");
-
-		var ctx_novo_hist_r = document.getElementById("novo_hist_r");
-		var novo_hist_r = ctx_novo_hist_r.getContext("2d");
-
-		var ctx_novo_hist_g = document.getElementById("novo_hist_g");
-		var novo_hist_g = ctx_novo_hist_g.getContext("2d");
-
-		var ctx_novo_hist_b = document.getElementById("novo_hist_b");
-		var novo_hist_b = ctx_novo_hist_b.getContext("2d");
-
-		var ctx_novo_hist_l = document.getElementById("novo_hist_l");
-		var novo_hist_l = ctx_novo_hist_l.getContext("2d");
-
-
-		// Inputs para a convolução
-		var tamanho = 3
-		criar_tabela_inputs(div = "tabela_convolucao")
-		celulas = document.getElementsByClassName("celulas")
-		filtro = obter_filtro(celulas)
-
+		/* Criando as variáveis para as imagens */
 		var imgOriginal = new Image();
 		var imgDataOut = new Image();
 		var imgConvolucao = new Image();
 		var imgConvolucaoAlterada = new Image();
 
 		// Criando a variável para exibir o fator multiplicativo para alterar a luminância
-		var texto_fator_multiplicativo = document.getElementById("texto_fator_multiplicativo")
+		var texto_fator_multiplicativo = document.getElementById("texto_fator_multiplicativo");
 
 
 		/* Slide de controle de número de pontos */
+		// Criando a variável para o slide
 		var slide_fator_multiplicativo = document.getElementById("slide_fator_multiplicativo");
+		// Criando a função para ser executada quando o slide é utilizado (o valor é alterado)
 		slide_fator_multiplicativo.oninput = function () {
+			// Alterando a luminância da imagem resultante de acordo com o valor do slide
 			alterar_luminancia(this.value / 100);
 		}
 
+		/* Lendo a imagem desejada */
+		// Imagem padrão utilizada
+		var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Golden-eyed_tree_frog_%28Agalychnis_annae%29.jpg/320px-Golden-eyed_tree_frog_%28Agalychnis_annae%29.jpg"
+		// Outras imagens de teste
+		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg/1024px-%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg";
+		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg/800px-Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg";
+
+		/* Considerações a respeito do uso do getImageData() no firefox */
 		//It seems that firefox does not allow you to use getImageData(...) unless the source of the canvas is from the same domain, 
 		//and it does not consider files on your hard drive as being from the same domain as an html document also on your hard drive.	
 		//https://developpaper.com/explain-how-to-solve-the-cross-domain-problem-of-canvas-image-getimagedata-todataurl/
 
-		// Lendo a imagem desejada
-		var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Golden-eyed_tree_frog_%28Agalychnis_annae%29.jpg/320px-Golden-eyed_tree_frog_%28Agalychnis_annae%29.jpg"
-		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg/1024px-%D0%A8%D0%BF%D0%B8%D1%86%D1%96_3.jpg";
-		//var imgUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg/800px-Eiffel_tower_at_Exposition_Universelle%2C_Paris%2C_1889.jpg";
-
-
-
+		// Alterando o acesso das imagens para permitir a recuperação dos valores da imagem a partir 
 		imgOriginal.crossOrigin = '';
 		imgDataOut.crossOrigin = '';
 		imgConvolucao.crossOrigin = '';
@@ -341,111 +378,201 @@
 		// Desenhando a imagem da convolução
 		ctxConvolucao.drawImage(imgConvolucao, 0, 0);
 
-
-
-		// Função para ser executada quando a imagem for carregada
-		imgOriginal.onload = function () { alterar_luminancia() }
-
-		imgConvolucao.onload = function () {
-			filtro = obter_filtro(celulas)
-			aplicar_convolucao(filtro)
+		// Função para ser executada quando a imagem da luminância for carregada
+		// alterar_luminancia()
+		imgOriginal.onload = function () {
+			alterar_luminancia()
 		}
 
+		// Função para ser executada quando a imagem da convolução for carregada
+		// aplicar_convolucao()
+		imgConvolucao.onload = function () {
+			aplicar_convolucao()
+		}
+
+
+		/* Função para atualizar o link das imagens e, consequentemente, a imagem que está sendo utilizada */
+		/* Parâmetros */
+		// imagem: de qual função é a imagem (de luminância ou convolução) - Parâmetro obrigatório
 		function atualizar_link(imagem) {
+			// Verifica se o link que deve ser mudado é da imagem de luminância
 			if (imagem == "luminancia") {
+				// Atualiza o link da imagem com o link inserido no input
 				imgOriginal.src = document.getElementById("link_imagem_luminancia").value
 
-				// Definindo o tamanho das telas Canvas para as imagens para alterar a luminância
+				// Atualiza o tamanho das telas Canvas para as imagens para alterar a luminância
 				canvasOriginal.width = imgOriginal.width
 				canvasOriginal.height = imgOriginal.height
 				canvasOut.width = imgOriginal.width
 				canvasOut.height = imgOriginal.height
 
+				// Depois de atualizar a variável com o link e o tamanho da tela Canvas, utiliza a função de alterar a luminãncia para gerar os resultados com a nova imagem (com o valor atual do slide)
 				alterar_luminancia(slide_fator_multiplicativo.value / 100)
+				// Se a imagem a ser alterada não for de luminância, verifica se o link que deve ser mudado é da imagem de convolução
 			} else if (imagem == "convolucao") {
+				// Atualiza o link da imagem com o link inserido no input
 				imgConvolucao.src = document.getElementById("link_imagem_convolucao").value
 
-				// Passando a altura e a largura da imagem
+				// Alterando a variável com a altura e a largura da imagem para a convolução
 				largura_da_imagem = imgConvolucao.width
 				altura_da_imagem = imgConvolucao.height
 
-				// Definindo o tamanho das telas Canvas para as imagens para aplicar a convolução
+				// Alterando o tamanho das telas Canvas para as imagens para aplicar a convolução
 				canvasConvolucao.width = imgConvolucao.width
 				canvasConvolucao.height = imgConvolucao.height
 				canvasConvolucaoAlterada.width = imgConvolucao.width
 				canvasConvolucaoAlterada.height = imgConvolucao.height
 
-				// Desenhando a imagem da convolução
+				// Desenhando a imagem da convolução original
 				ctxConvolucao.drawImage(imgConvolucao, 0, 0);
+
+				// Atualiza o filtro da convolução com as entradas da matriz de convolução
 				filtro = obter_filtro(celulas)
-				aplicar_convolucao(filtro)
+
+				// Aplica a convolução (com o filtro novo da matriz)
+				aplicar_convolucao()
 			}
 		}
 
+
+		/* Função para obter o filtro da convolução */
+		/* Parâmetros */
+		// celulas: celulas matriz de convolução (objeto html obtido pelo método getElementsByClassName() com a classe das celulas - a classe deve ser a mesma para todas as celulas e pertencer apenas as celulas dessa matriz) - Parâmetro obrigatório
 		function obter_filtro(celulas) {
+			// Inicia a variável para o filtro como um array vazio
 			filtro = []
+
+			// Calcula o tamanho que deve ser o filtro (quantas linhas e colunas - a matriz é quadrada, o filtro deve ter o número de linha e colunas igual a raiz quadrada da quantidade de celulas)
 			tamanho_filtro = Math.pow(celulas.length, 1 / 2)
-			for (i = 0; i < tamanho_filtro; i++) {
+
+			// laço para criar as linhas do filtro
+			for (let i = 0; i < tamanho_filtro; i++) {
+				// Inicia a variável para a linha como um array vazio
 				linha = []
-				for (j = 0; j < tamanho_filtro; j++) {
+
+				// laço para criar as colunas do filtro (cada coluna dentro de cada linha)
+				for (let j = 0; j < tamanho_filtro; j++) {
+					// Calcula o indice a ser acessado na lista de celulas para colocar o valor da celula no filtro (pois estamos tranformando um array 1 por n em um array multidimensional m por m, tal que n = m*m)
 					indice = (i * tamanho_filtro) + j
+
+					// Adiciona o respectivo da celula da matriz ao filtro, como número float (é usada a função eval() para aceitar valores de celulas com calculos, por exemplo: "1/2" será aceito e armazenado como 0.5)
 					linha.push(eval(celulas[indice].value))
 				}
+
+				// Adiciona a linha ao filtro
 				filtro.push(linha)
 			}
+
+			// Retorna o filtro como um array multidimensional representando a matriz de convolução (matriz quadrada)
 			return filtro
 		}
 
-		function criar_tabela_inputs(div, reiniciar = false, blur = false) {
-			valores_das_celulas = [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]
 
+		/* Cria a tabela com o os inputs representando a matriz de convolução */
+		/* Parâmetros */
+		// div: id da div onde deve ser gerada a tabela (a div deve ser destinada para conter apenas a tabela) - Parâmetro obrigatório
+		// reiniciar: informa se a tabela está sendo criada pela primeira vez ou recriada com um novo tamanho ou novos valores padrões. "true" para apagar a tabela já criada e criar uma nova - Parâmetro opcional
+		// blur: parametro para informar se é dejado preencher as celulas da tabela os valores para aplicar o efeito de blur - Parâmetro opcional
+		function criar_tabela_inputs(div, reiniciar = false, blur = false) {
+			// Valores iniciais para criar a tabela
+			valores_das_celulas = [[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]]
+
+			// Cria a variável para a div com o local para inserir a tabela
 			let local = document.getElementById(div)
+
+			// Cria a variável e o elemento da tabela
 			let table = document.createElement("table")
+
+			// verifica se a tabela deve ser apagada e refeita
 			if (reiniciar == true) {
+				// Obtem os valores que já estão nas celulas da tabela
 				valores_das_celulas = obter_filtro(celulas)
+
+				// Apaga a tabela
 				local.removeChild(local.firstChild)
 			}
+
+			// Laço para criar as linhas da tabela
 			for (i = 0; i < tamanho; i += 1) {
+				// Cria o elemento da linha da tablea
 				let row = document.createElement("tr");
+
+				// Laço para criar as colunas da tabela (linha a linha)
 				for (j = 0; j < tamanho; j += 1) {
+					// Cria o elemento da coluna (celula da linha da tabela)
 					let cell = document.createElement("td");
+
+					// Cria o elemento do input da celula
 					let input = document.createElement("INPUT");
+
+					// Define a classe das celulas da tabela como "celulas"
 					input.className = "celulas"
+
+					// Verifica se a tabela deve ser preenchida com os valores para aplicar o blur
 					if (blur == true) {
+						// Preenche a celula com os valores para aplicar o blur
 						input.setAttribute("value", 1 / (tamanho * tamanho))
+
+						// Se não for para aplicar o blur, verifica se o indice da celula excede os indices dos valores que já se tem (por terem sido preenchidos ou por padrão)
 					} else if ((i < valores_das_celulas.length) & (j < valores_das_celulas.length)) {
+						// Preenche a celula com o respectivo valor já pré estabelecido (por terem sido preenchido ou por padrão) - Isso serve para que um valor já preenchido não se perca ao alterar o tamanho da tabela, a não ser que a mesma diminua de forma que as celulas sejam apagadas
 						input.setAttribute("value", valores_das_celulas[i][j])
+						// Caso o indice da celula a ser preenchida exceda os já valores que já existem (por terem sido preenchidos ou por padrão)
 					} else {
+						// Preenche a celula com 0 por padrão
 						input.setAttribute("value", 0)
 					}
+
+					// Define o tipo do input como campo de texto
 					input.setAttribute("type", "text")
+
+					// Adiciona o input a celula
 					cell.appendChild(input)
+
+					// Adiciona a celula a linha
 					row.appendChild(cell)
 				}
+
+				// Adiciona a linha a tabela
 				table.appendChild(row)
 			}
+
+			// Adiciona a tabela a div (o local onde deve ser inserida a tabela)
 			local.appendChild(table)
 		}
 
+
+		/* Função para alterar o tamanho da matriz */
+		/* Parâmetros */
+		// acrescimo: acréscimo no tamanho da tabela (matriz). O acréscimo pode ser negativo para diminuir o tamanho - Parâmetro obrigatório
 		function alterar_tamanho_da_matriz(acrescimo) {
+			// Altera o tamanho da matriz de acordo com o acréscimo informado
 			tamanho += acrescimo
+
+			// Limita o tamanho mínimo da matriz para 3 por 3
 			if (tamanho < 3) {
 				tamanho = 3
 			}
+
+			// Recria a tabela com o novo tamanho
 			criar_tabela_inputs(div = "tabela_convolucao", reiniciar = true)
+
+			// Atualiza a variável com o objeto html das celulas pela classe
 			celulas = document.getElementsByClassName("celulas")
 		}
 
 
-		function aplicar_convolucao(filtro = [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]) {
+		/* Função para aplicar a convolução */
+		function aplicar_convolucao() {
+			// Obtem o filtro (matriz de convolução) para  convolução a partir das celulas da tabela para a matriz de convolução
 			filtro = obter_filtro(celulas)
+
+			// Obtem o tamanho da borda da imagem onde os pixel não vão seguir a mesma conta, pois a matriz de convolução vai exceder os pixel da imagem
 			borda = Math.floor(filtro.length / 2)
 
-
+			// Crias as variáveis com os dados dos pixels da imagem original e para a imagem que será a resultante após a aplicar a matriz de convolução
+			imgConvolucaoOriginal = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
 			imgConvolucaoAlterada = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
-			imgConvolucaoAlterada2 = ctxConvolucao.getImageData(0, 0, largura_da_imagem, altura_da_imagem);
-
-
 
 			// Criando vetor vazio para armazenar os valores para alterar a imagem
 			vetor_imagem_alterada = []
@@ -459,7 +586,6 @@
 					let resultado = 0
 					// Percorrendo o filtro e obtendo o resultado da convolução
 					for (let linha = 0; linha < filtro.length; linha += 1) {
-						//testes.textContent = filtro_3x3[linha].length
 						for (let coluna = 0; coluna < filtro[linha].length; coluna += 1) {
 							// Aplicando a matriz de convolução para os pixel da imagem, considerando na borda que os pixel além da borda têm valor 0
 							if (((i + linha - borda) >= 0) & ((j + coluna - borda) >= 0) & ((j + coluna - borda) < largura_da_imagem) & ((i + linha - borda) < altura_da_imagem)) {
@@ -467,7 +593,7 @@
 								indice_pixel = ((j + coluna - borda) * 4) + ((i + linha - borda) * largura_da_imagem * 4)
 
 								// Adicionando o valor dos pesos ao resultado da convolução
-								resultado += imgConvolucaoAlterada.data[indice_pixel] * filtro[linha][coluna]
+								resultado += imgConvolucaoOriginal.data[indice_pixel] * filtro[linha][coluna]
 
 							}
 
@@ -489,19 +615,20 @@
 
 
 					// Adicionando o resultado na imagem resultante
-					imgConvolucaoAlterada2.data[indice_pixel] = resultado
-					imgConvolucaoAlterada2.data[indice_pixel + 1] = resultado
-					imgConvolucaoAlterada2.data[indice_pixel + 2] = resultado
-					//imgConvolucaoAlterada.data[indice_pixel+3] = 255
+					imgConvolucaoAlterada.data[indice_pixel] = resultado
+					imgConvolucaoAlterada.data[indice_pixel + 1] = resultado
+					imgConvolucaoAlterada.data[indice_pixel + 2] = resultado
 
 				}
 			}
 			// Imprimindo resultado 
-			ctxConvolucaoAlterada.putImageData(imgConvolucaoAlterada2, 0, 0);
+			ctxConvolucaoAlterada.putImageData(imgConvolucaoAlterada, 0, 0);
 
 		}
 
-
+		/* Função para alterar a luminância da imagem */
+		/* Parâmetros */
+		// Fator multiplicativo para o cáculo para alterar a luminância
 		function alterar_luminancia(fator_multiplicativo = 1) {
 			// Criando vetores vazios para R, G e B e L
 			// Original
@@ -530,11 +657,10 @@
 				novo_vetor_blue[i] = 0
 			};
 
-
+			// Desenha a imagem original na tela Canvas
 			ctxOriginal.drawImage(imgOriginal, 0, 0);
-			//ctxOutput.drawImage(imgOriginal, 0, 0);
-			// ctxConvolucao.drawImage(imgConvolucao, 0, 0);
 
+			// Obtem os dados da imagem original e armazena numa variável para posteriormente alterar esses dados e exibir a imagem resultante com a luminância alterada
 			imgDataOut = ctxOriginal.getImageData(0, 0, canvasOriginal.width, canvasOriginal.height);
 
 			// Transformando a imagem de RGB para HSL e criando vetores de R, G, B e L (para os histogramas)
@@ -580,18 +706,18 @@
 			// Média da luminância
 			media_luminancia = media_vetor(vetor_light)
 
-			// Fator multiplicativo (para ajustar a luminância) - Fornecido como parãmetro da função
-			// fator_multiplicativo = 1
+			// Exibe o fator multiplicativo que fui utilizada para criar a imagem resultante sendo exibida
 			texto_fator_multiplicativo.textContent = "Fator multiplicativo para alterar a luminância: " + fator_multiplicativo
 
 			// Reajustando a luminância e voltando a imagem para RGB
 			for (let i = 0; i < imgDataOut.data.length; i += 4) {
-				// Ajustando a luminância (para aumentar o contraste)
+				// Alterando a luminância da imagem de acordo com a fórmula: nova luminância = ((luminância original - media da luminância original)(fator multiplicativo para o ajuste)) + media da luminância original
 				nova_luminancia = ((imagem_hsl[i + 2] - media_luminancia) * fator_multiplicativo) + media_luminancia
+
+				// Trunca os novos valores da luminância entre 0 e 1
 				if (nova_luminancia < 0) {
 					nova_luminancia = 0
-				}
-				if (nova_luminancia > 1) {
+				} else if (nova_luminancia > 1) {
 					nova_luminancia = 1
 				}
 
@@ -641,9 +767,6 @@
 				vetor_light_hist[Math.round(vetor_light[i] * 100)] = vetor_light_hist[Math.round(vetor_light[i] * 100)] + 1
 				novo_vetor_light_hist[Math.round(novo_vetor_light[i] * 100)] = novo_vetor_light_hist[Math.round(novo_vetor_light[i] * 100)] + 1
 			}
-
-			// Imprimindo os testes
-			// testes.textContent = "a"
 
 			// Desenhando o histograma de luminância original
 			desenhar_histograma(hist_l, vetor_light_hist, "black", maximo_y = Math.max.apply(null, vetor_light_hist), maximo_x = 1, bins = 100)
@@ -797,7 +920,7 @@
 			// return [r * 255, g * 255, b * 255]; // Retorno original
 		}
 
-		// Função para calcular a média do vetor
+		// Função para calcular a média do vetor - Fonte: https://flexiple.com/get-average-of-array-javascript/
 		function media_vetor(array) {
 			var total = 0;
 			var contador = 0;
