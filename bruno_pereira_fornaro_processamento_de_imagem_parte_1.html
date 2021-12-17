@@ -16,12 +16,14 @@
 
 		<!-- CSS -->
 		<style>
+			/* Estilo do corpo da página */
 			body {
 				background-color: white;
 				color: black;
 				font-family: sans-serif;
 			}
 
+			/* Centralizando o conteúdo da página com margens laterais */
 			#div-externa {
 				width: 80%;
 				margin-left: 10%;
@@ -32,6 +34,22 @@
 				justify-content: center;
 			}
 
+			/* Tamanho das telas Canvas da primeira parte */
+			.parte_1 canvas {
+				width: 19.5%;
+			}
+
+			/* Tamanho das telas Canvas da segunda parte */
+			.parte_2 canvas {
+				width: 49.5%;
+			}
+
+			/* Classe para centralizar o texto */
+			.centralizar-texto {
+				text-align: center;
+			}
+
+			/* Estilo do slider para alterar o fator multiplicativo */
 			.slider {
 				-webkit-appearance: none;
 				width: 95%;
@@ -43,18 +61,6 @@
 				transition: opacity .2s;
 				margin-bottom: 0.6em;
 				margin-right: 5%;
-			}
-
-			.parte_1 canvas {
-				width: 19.5%;
-			}
-
-			.parte_2 canvas {
-				width: 49.5%;
-			}
-
-			.centralizar-texto {
-				text-align: center;
 			}
 
 			.slider:hover {
@@ -70,6 +76,7 @@
 				cursor: pointer;
 			}
 
+			/* Estilo das celulas da tabela da matriz de convolução */
 			.celulas {
 				width: 2em;
 				height: 2em;
@@ -79,6 +86,7 @@
 				border-color: gray;
 			}
 
+			/* Estilo dos botões da página */
 			button {
 				width: 5em;
 				height: 2em;
@@ -93,11 +101,13 @@
 				margin: 0.1em;
 			}
 
+			/* Classe para centralizar os elementos */
 			.centralizar {
 				display: flex;
 				justify-content: center;
 			}
 
+			/* Estilo do input de links para alterar a imagem */
 			.input_link {
 				width: 30em;
 				height: 2em;
@@ -117,12 +127,10 @@
 <body>
 	<div id="div-externa">
 		<!-- Título -->
-		<h1> Processamento de imagens</h1>
-		<!-- Subtítulo -->
-		<h2>Leitura, escrita e processamento de imagens com Canvas e JavaScript.</h2>
+		<h1> Processamento de imagens matriciais</h1>
 
-		<!-- Tópico 1 -->
-		<h3>Histograma de frequências da luminância</h3>
+		<!-- Tópico 1 - Luminância -->
+		<h2>Histograma de frequências e luminância</h2>
 
 		<!-- Texto inicial explicativo -->
 		<p>Nesta primeira atividade de processamento de imagem está sendo feita a leitura dos pixels de uma imagem em
@@ -131,16 +139,27 @@
 			é alterada, depois convertida novamente para RGB e exibida, juntamente dos seus respectivos histogramas.</p>
 		<p>O ajuste na luminância está sendo feito da seguinte forma: </p>
 		<!-- Cálculo utilizado -->
-		<p class="centralizar-texto">nova luminância = ((luminância original - media da luminância original)(fator
-			multiplicativo para o ajuste)) + media da luminância original</p>
+		<p class="centralizar-texto">nova luminância = ((luminância original - média da luminância original)(fator
+			multiplicativo para o ajuste)) + média da luminância original</p>
 		<p>Abaixo é possível ver a imagem original e seus histogramas de R, G, B e L, respectivamente, na primeira linha
 			e na segunda linha a imagem alterada e seus respectivos histogramas da mesma forma. É possível alterar a
 			imagem utilizada, para isso deve ser inserido abaixo o
-			link de onde a imagem está sendo servida. É recomendado que sejam utilizadas imagem de tamanho
-			pequeno para não tornar o precesso muito lento e que as imagens colocadas sejam da Wikimedia Commons em .jpg
+			link de onde a imagem está sendo servida. É recomendado que sejam utilizadas imagens de tamanho
+			pequeno para não tornar o processo muito lento e que as imagens colocadas sejam da <a
+				href="https://commons.wikimedia.org/wiki/P%C3%A1gina_principal" target="_blank">Wikimedia Commons</a> em
+			.jpg
 			para haver mais chances da imagem ser compatível. Além disso, também há abaixo
 			uma barra de ajuste para o fator multiplicativo da alteração de luminância, mude os valores para ver a
 			diferença no resultado.</p>
+		<ul>
+			<li>
+				<p>Observação: Se qualquer imagem não estiver sendo carregada ao abrir a página, peço para que a mesma
+					seja atualizada e, além disso, caso ao inserir o link de uma nova imagem e clicar no botão para
+					aplicar a alteração essa alteração não seja aplicada na primeira vez, clique para aplicar mais uma
+					vez, pois às vezes ocorre algum problema no carregamento das imagens. Isso também vale para a
+					próxima parte da atividade.</p>
+			</li>
+		</ul>
 
 		<!-- Paragrafo para testes -->
 		<p id="testes"></p>
@@ -178,21 +197,23 @@
 		</figure>
 		<br>
 
-		<!-- Tópico 2 -->
-		<h3>Convolução</h3>
+		<!-- Tópico 2 - Convolução -->
+		<h2>Filtragem espacial e convolução</h2>
 
 		<!-- Texto de explicação da convulução -->
-		<p>Agora, nesta segunda etapa, vamos lidar com matrizes de convulução. Vamos ler os pixels de forma análoga a
-			etapa anterior, mas nesse caso a imagem resultante vai ser obtida de acordo com um calculo feito com os
+		<p>Agora, nesta segunda etapa, vamos lidar com matrizes de convolução. Vamos ler os pixels de forma análoga a
+			etapa anterior, mas nesse caso a imagem resultante vai ser obtida de acordo com um cálculo feito com os
 			pixels ao seu redor. Vamos observar a tabela mais abaixo para entender melhor o processo. Para a matriz
-			padrão que é exibida, temos uma matriz 3 por 3 e isso no indica que para cada pixel vamos multiplicar o seu
-			valor pelo peso no valor do centro da matriz e, da mesma forma, seus pixels vizinhos terão seus valores
+			padrão que é exibida, temos uma matriz 3 por 3 e isso nos indica que para cada pixel vamos multiplicar o seu
+			valor pelo peso do centro da matriz e, da mesma forma, seus pixels vizinhos terão seus valores
 			multiplicados pelos respectivos pesos na posição da matriz. Após isso, somamos todos os resultados e
-			atribuimos para o valor do pixel central na imagem resultante.</p>
+			atribuímos para o valor do pixel central na imagem resultante.</p>
 		<p>Podemos ver que já temos uma imagem padrão, assim como na primeira parte, porém nesse caso vamos utilizar
-			necessáriamente uma imagem em escala de cinza (preto e branco). É possível inserir uma nova imagem e
+			necessariamente uma imagem em escala de cinza (preto e branco). É possível inserir uma nova imagem e
 			aplicá-la abaixo. Novamente, é recomendado testar sejam utilizadas imagem de tamanho pequeno para
-			não tornar o precesso muito lento e que as imagens colocadas sejam da Wikimedia Commons em .jpg para haver
+			não tornar o processo muito lento e que as imagens colocadas sejam da <a
+				href="https://commons.wikimedia.org/wiki/P%C3%A1gina_principal" target="_blank">Wikimedia Commons</a> em
+			.jpg para haver
 			mais chances da imagem ser compatível.</p>
 
 		<!-- Entrada de link para inserir uma nova imagem e botão para aplicar a alteração -->
@@ -208,11 +229,17 @@
 			utilizada. Quanto maior a matriz utilizada para o blur mais perceptível é o resultado, tente usar matrizes
 			grandes para isso - principalmente se a imagem utilizada for grande.</p>
 		<p>Vale observar que as matrizes de convolução utilizadas sempre serão quadradas e com um número ímpar de linhas
-			e colunas, para o pixel calculado sempre esteja no centro da matriz. Além disso, para o cálculo dos valores
-			da borda da imagem é necessário fazer algum tipo de adaptação, pois não há valores excedendo os indices dos
-			pixels da imagem além da borda. Nesse caso, nas bordas foi considerado que os pixels que precisariam ser
+			e colunas, para que o pixel calculado sempre esteja no centro da matriz. Além disso, para o cálculo dos
+			valores
+			da borda da imagem é necessário fazer algum tipo de adaptação, pois não há valores excedendo os índices dos
+			pixels da imagem além da borda. Nesse caso, nas bordas foi considerado que os pixels que precisam ser
 			calculados mas excedem a imagem têm valor 0 (por isso podemos ver que ao utilizar matrizes maiores fica
 			perceptível que as bordas ficam mais escuras, como ao aplicar o blur por exemplo).</p>
+		<p>Tendo dito isto, vemos também que já há um preenchimento padrão da matriz, com um filtro de detecção de borda
+			(vertical), mas convido o leitor a testar outros filtros, como o de blur que já foi mencionado e também os
+			filtros que aparecem na <a href="http://www.facom.ufu.br/~backes/gsi058/Aula06-FiltragemEspacial.pdf"
+				target="_blank">referência base</a> utilizada em aula para esse tópico e utilizam somente uma matriz
+			para a convolução.</p>
 
 		<!-- Botões de interação para a convolução -->
 		<div class="centralizar">
@@ -232,10 +259,45 @@
 		<figure>
 			<div class="parte_2">
 				<!-- Imagem convulução -->
+				<!-- Imagem original -->
 				<canvas id="imagemConvolucao" width="0" height="0"></canvas>
+				<!-- Imagem alterada -->
 				<canvas id="imagemConvolucaoAlterada" width="0" height="0"></canvas>
 			</div>
 		</figure>
+		<br>
+
+		<!-- Conclusões -->
+		<h2>Conclusões</h2>
+		<p>Pudemos ver a implementação das duas etapas do trabalho, a primeira sobre os histogramas de frequência e a
+			luminância da imagem e a segunda
+			sobre filtragem espacial (com a convolução). Dessa forma, pudemos observar as possibilidades que esses
+			conhecimentos trazem para a manipulação e interpretação de imagens, cada uma com seus diferentes aspectos.
+		</p>
+		<p>Falando a respeito da primeira parte, pudemos ver como pode ser relativamente simples a aplicação de
+			algoritmos para alterar a luminância das imagens de forma que proporcione resultados relevantes e
+			importantes, como podemos destacar de um caso um pouco mais complexo que o cálculo que foi implementado, que
+			é o de equalização do histograma de luminância, que é útil para a comparação de imagens em experimentos, por
+			exemplo, como foi discutido em aula, sendo essa uma operação semelhante que também altera a luminância da
+			imagem e causa um efeito de redistribuição dos valores do histograma - no caso, buscando "linearizar" o
+			histograma acumulado.</p>
+		<p>A respeito da convolução, pudemos ver diversas aplicações diferentes com resultados muito interessantes em
+			aula, sendo que essa atividade proporcionou uma oportunidade para que isso fosse implementado e observado na
+			prática. Foi deixado como padrão para aparecer primeiro no resultado do filtro um detector de borda, mas
+			apenas vertil, pois o filtro para todas as bordas exige mais que somente uma matriz de convolução. Além
+			desse filtro, que é muito interessante, também foi deixado como padrão um botão para aplicar o efeito de
+			borramento (blur), onde podemos observar bem a diferença ao usar filtro com matrizes maiores, que apesar de
+			produzirem resultados melhores, também requerem mais processamento (demorando mais, consequentemente).</p>
+		<p>Num âmbito geral, foi buscado deixar os resultado o mais dinâmicos possíveis, que proporcionou um resultado
+			onde podemos observar melhor ainda todos os diferentes resultados e compará-los. Isso também foi de grande
+			importância para o aprendizado, não somente pelas possibilidades que proporciona para observar os
+			resultados, mas também para aprender a implementar o código necessário de forma que além de calcular as
+			imagens desejadas com os cálculos que temos, também consigamos fazer isso de forma dinâmica e, na medida do
+			possível, que seja acessível e intuitiva para quem interagir com a página HTML. Dessa forma, acredito que
+			não somente o conteúdo que foi apresentado seja de grande importância, mas também a forma que foi pensada
+			essa atividade, com seu grau de orientação (o que fazer), liberdade e incentivo (o que é possível fazer para
+			ir além).</p>
+		<br>
 
 		<!-- Bibliografia -->
 		<h2>Bibliografia</h2>
@@ -251,6 +313,20 @@
 				target="_blank">https://flexiple.com/get-average-of-array-javascript/</a>. Acessado 8 de dezembro de
 			2021.</p>
 
+		<!-- Obter dados do input HTML pelo JavaScript -->
+		<p>W3 Schools - Input Text form Property. Disponível em: <a
+				href="https://www.w3schools.com/jsref/prop_text_form.asp"
+				target="_blank">https://www.w3schools.com/jsref/prop_text_form.asp</a>.
+			Acessado 9 de dezembro de
+			2021.</p>
+
+		<!-- Converter uma string com uma operação numérica para float no JavaScript -->
+		<p>STACKOVERFLOW - Convert Fraction String to Decimal?. Disponível em: <a
+				href="https://stackoverflow.com/questions/7142657/convert-fraction-string-to-decimal"
+				target="_blank">https://stackoverflow.com/questions/7142657/convert-fraction-string-to-decimal</a>.
+			Acessado 9 de dezembro de
+			2021.</p>
+
 		<!-- Criar uma tabela no HTML pelo JavaScript -->
 		<p>MDN Web Docs - Traversing an HTML table with JavaScript and DOM Interfaces. Disponível em: <a
 				href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces"
@@ -258,7 +334,21 @@
 			Acessado 12 de dezembro de
 			2021.</p>
 
+		<!-- Remover um elemento descendente do HTML pelo JavaScript -->
+		<p>MDN Web Docs - Node.removeChild. Disponível em: <a
+				href="https://developer.mozilla.org/pt-BR/docs/Web/API/Node/removeChild"
+				target="_blank">https://developer.mozilla.org/pt-BR/docs/Web/API/Node/removeChild</a>.
+			Acessado 12 de dezembro de
+			2021.</p>
+
 	</div>
+
+	<!-- Espaçamento apenas para a página ter um espaço em branco após a bibliografia e o fim não ficar diretamente abaixo -->
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
 
 
 	<!-- JavaScript -->
@@ -362,7 +452,7 @@
 		canvasOut.height = imgOriginal.height
 
 		// Imagem convolução
-		imgConvolucao.src = "https://upload.wikimedia.org/wikipedia/commons/e/e7/Foto_em_preto_e_branco_do_Centro_de_Eventos_da_UFSC.jpg"
+		// imgConvolucao.src = "https://upload.wikimedia.org/wikipedia/commons/e/e7/Foto_em_preto_e_branco_do_Centro_de_Eventos_da_UFSC.jpg"
 		imgConvolucao.src = "https://upload.wikimedia.org/wikipedia/commons/c/c9/Adelgundes_of_Portugal%2C_Duchess_of_Guimar%C3%A3es.jpg"
 
 		// Passando a altura e a largura da imagem
@@ -375,20 +465,20 @@
 		canvasConvolucaoAlterada.width = imgConvolucao.width
 		canvasConvolucaoAlterada.height = imgConvolucao.height
 
-		// Desenhando a imagem da convolução
-		ctxConvolucao.drawImage(imgConvolucao, 0, 0);
-
 		// Função para ser executada quando a imagem da luminância for carregada
-		alterar_luminancia()
-		// imgOriginal.onload = function () {
-		// 	alterar_luminancia()
-		// }
+		imgOriginal.onload = function () {
+			// Utilizando a função para alterar a luminância, exibir o resultado e plotar os histogramas
+			alterar_luminancia()
+		}
 
 		// Função para ser executada quando a imagem da convolução for carregada
-		aplicar_convolucao()
-		// imgConvolucao.onload = function () {
-		// 	aplicar_convolucao()
-		// }
+		imgConvolucao.onload = function () {
+			// Desenhando a imagem da convolução
+			ctxConvolucao.drawImage(imgConvolucao, 0, 0);
+
+			// Utilizando a função para aplicar a convolução e exibir o resultado
+			aplicar_convolucao()
+		}
 
 
 		/* Função para atualizar o link das imagens e, consequentemente, a imagem que está sendo utilizada */
